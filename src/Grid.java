@@ -140,9 +140,6 @@ public class Grid extends JPanel {
         }
         setEnd(topChoice);
         repaint();
-
-        GreedyBFS();
-
     }
 
     void setEnd(Node _end) {
@@ -224,6 +221,11 @@ public class Grid extends JPanel {
                     neighbour.pathVisited = true;
                     queue.add(neighbour);
                     if (neighbour.isEnd) {
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e){
+                            Setup.handleError(e);
+                        }
                         pathFound();
                         return;
                     }

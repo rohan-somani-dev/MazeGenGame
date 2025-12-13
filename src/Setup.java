@@ -25,12 +25,12 @@ public class Setup {
     public static final Color PATH_LOOKING_COLOR = new Color(0xFFB4B4);
 
     public static final int GRID_SIZE = 50;
-    public static final int WINDOW_SIZE = 800;
+    public static final int WINDOW_SIZE = 1000;
     public static final int FUNCTION_SUCCESS = 0;
     public static final int INTERRUPTED_ERROR = 1;
 
-    public static int sleepTime = 5;
-    public static int pathSleepTime = 5;
+    public static int sleepTime = 1;
+    public static int pathSleepTime = 1;
 
     private Setup() {
     }
