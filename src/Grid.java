@@ -8,6 +8,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Stack;
 
@@ -21,10 +22,10 @@ public class Grid extends JPanel {
     Random random;
 
     Node start;
-    Node end; 
+    Node end;
 
     boolean testingInterruptedException;
-    
+
     /**
      * Initialize grid.
      *
@@ -45,7 +46,7 @@ public class Grid extends JPanel {
 
         random = new Random();
 
-        start = nodes[gridSize-1][0];
+        start = nodes[gridSize - 1][0];
         start.isStart = true;
 
     }
@@ -69,14 +70,13 @@ public class Grid extends JPanel {
         while (!stack.isEmpty()) {
             Node node = stack.peek();
             Node nextNode = getRandomNeighbour(node);
-            if (nextNode != null){
+            if (nextNode != null) {
                 nextNode.mazeVisited = true;
 
                 node.isTarget = false;
                 nextNode.isTarget = true;
 
                 SwingUtilities.invokeLater(this::repaint);
-                
 
 //                remove walls
                 int deltaX = nextNode.indexX - node.indexX;
@@ -97,21 +97,20 @@ public class Grid extends JPanel {
                     node.walls &= ~Node.UP;
                     nextNode.walls &= ~Node.DOWN;
                 }
-                
+
                 stack.push(nextNode);
-				
-                
+
                 if (Setup.sleepTime > 0) {
-                	try {
-                		if (testingInterruptedException) throw new InterruptedException("TESTING ERROR");
-                		Thread.sleep(Setup.sleepTime);
-                	} catch (InterruptedException e){
-                		Setup.handleError(e);
-                		return Setup.INTERRUPTED_ERROR; //error code
-                	}
-                	
+                    try {
+                        if (testingInterruptedException) throw new InterruptedException("TESTING ERROR");
+                        Thread.sleep(Setup.sleepTime);
+                    } catch (InterruptedException e) {
+                        Setup.handleError(e);
+                        return Setup.INTERRUPTED_ERROR; //error code
+                    }
+
                 }
-                
+
             } else {
                 stack.pop();
             }
@@ -142,17 +141,19 @@ public class Grid extends JPanel {
         setEnd(topChoice);
         repaint();
 
+        GreedyBFS();
+
     }
-    
+
     void setEnd(Node _end) {
-    	end = _end;
-    	end.isEnd = true; 
-    	
-    	for (Node[] row : nodes){
-    		for (Node n : row){
-    			n.target = end; 
-    		}
-    	}
+        end = _end;
+        end.isEnd = true;
+
+        for (Node[] row : nodes) {
+            for (Node n : row) {
+                n.target = end;
+            }
+        }
     }
 
     ArrayList<Node> getDeadEnds() {
@@ -167,9 +168,9 @@ public class Grid extends JPanel {
         return out;
     }
 
-    ArrayList<Node> validateNeighbours(ArrayList<Node> nodes, boolean mazeGen){
+    ArrayList<Node> validateNeighbours(ArrayList<Node> nodes, boolean mazeGen) {
         ArrayList<Node> out = new ArrayList<>();
-        for (Node n : nodes){
+        for (Node n : nodes) {
             if (mazeGen) {
                 if (!n.mazeVisited) out.add(n);
             } else {
@@ -177,26 +178,23 @@ public class Grid extends JPanel {
             }
         }
 
-
         return out;
     }
 
     Node getRandomNeighbour(Node n) {
         ArrayList<Node> neighbours = getNeighbours(n);
         ArrayList<Node> validated = validateNeighbours(neighbours, true);
-        if (validated != null && !validated.isEmpty()){
-        	return validated.get(random.nextInt(validated.size()));
+        if (validated != null && !validated.isEmpty()) {
+            return validated.get(random.nextInt(validated.size()));
         }
         return null;
     }
 
-
-    
-    ArrayList<Node> getNeighbours(Node n){
-    	int x = n.indexX;
-    	int y = n.indexY;
-    	ArrayList<Node> neighbours = new ArrayList<>();
-    	int[][] offsets = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    ArrayList<Node> getNeighbours(Node n) {
+        int x = n.indexX;
+        int y = n.indexY;
+        ArrayList<Node> neighbours = new ArrayList<>();
+        int[][] offsets = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
         for (int[] offset : offsets) {
             int currX = x + offset[0];
             int currY = y + offset[1];
@@ -204,20 +202,65 @@ public class Grid extends JPanel {
                 neighbours.add(nodes[currY][currX]);
             }
         }
-        
-        if (!neighbours.isEmpty()) {
-            return neighbours;
-        } else {
-        	return null;
-        }
+
+        return neighbours;
     }
-    
-//    TODO
+
+    //    TODO
     public void GreedyBFS() {
         start.pathVisited = true;
+        PriorityQueue<Node> queue = new PriorityQueue<>(
+                (a, b) -> Integer.compare(a.getManhattanDistance(end), b.getManhattanDistance(end))
+        );
+        queue.add(start);
+
+        while (!queue.isEmpty()) {
+            Node curr = queue.poll();
+            ArrayList<Node> neighbours = getNeighbours(curr);
+            if (neighbours == null) continue;
+            for (Node neighbour : neighbours) {
+                if (!neighbour.pathVisited && !Node.wallBetween(curr, neighbour)) {
+                    neighbour.parent = curr;
+                    neighbour.pathVisited = true;
+                    queue.add(neighbour);
+                    if (neighbour.isEnd) {
+                        pathFound();
+                        return;
+                    }
+                }
+            }
+            SwingUtilities.invokeLater(this::repaint);
+            try {
+                Thread.sleep(Setup.pathSleepTime);
+            } catch (InterruptedException e) {
+                Setup.handleError(e);
+            }
+
+        }
+
     }
-    
-    
+
+    void pathFound() {
+        retrace();
+    }
+
+    void retrace() {
+        Node pathNode = end;
+        System.out.println("RETRACING");
+        while (pathNode != null) {
+            pathNode.onPath = true;
+            pathNode = pathNode.parent;
+            SwingUtilities.invokeLater(this::repaint);
+
+            try {
+                Thread.sleep(Setup.pathSleepTime);
+            } catch (InterruptedException _) {
+                System.out.println("ERRORRRRRRR");
+            }
+        }
+
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

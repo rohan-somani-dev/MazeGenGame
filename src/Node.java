@@ -33,9 +33,11 @@ public class Node implements Comparable<Node>{
 
     boolean debug;
     
-    boolean pathVisited; 
+    boolean pathVisited;
+    boolean onPath;
 
-    Node target; 
+    Node target;
+    Node parent;
     
     public Node(int indexX, int indexY) {
         this.indexX = indexX;
@@ -56,6 +58,8 @@ public class Node implements Comparable<Node>{
         if (debug) fillColor = Setup.DEBUG_COLOR;
         if (isStart) fillColor = Setup.START_COLOR;
         if (isEnd) fillColor = Setup.END_COLOR;
+        if (pathVisited) fillColor = Setup.PATH_LOOKING_COLOR;
+        if (onPath) fillColor = Setup.PATH_COLOR;
         g.setColor(fillColor);
 
         int x = indexX * size;
@@ -68,10 +72,10 @@ public class Node implements Comparable<Node>{
 
 //        draw walls
         g.setColor(Setup.WALL_COLOR);
-        if ((walls & UP) != 0 || indexY == 0) g.drawLine(x, y, x + size, y);
-        if ((walls & LEFT) != 0 || indexX == 0) g.drawLine(x, y, x, y + size);
-        if ((walls & DOWN) != 0 || isLastCol) g.drawLine(x, y + size - 1, x + size - 1, y + size -  1);
-        if ((walls & RIGHT) != 0 || isLastRow) g.drawLine(x + size - 1, y, x + size - 1, y + size - 1);
+        if (checkWall(UP)|| indexY == 0) g.drawLine(x, y, x + size, y);
+        if (checkWall(LEFT) || indexX == 0) g.drawLine(x, y, x, y + size);
+        if (checkWall(DOWN) || isLastCol) g.drawLine(x, y + size - 1, x + size - 1, y + size -  1);
+        if (checkWall(RIGHT) || isLastRow) g.drawLine(x + size - 1, y, x + size - 1, y + size - 1);
 
 
     }
@@ -88,4 +92,18 @@ public class Node implements Comparable<Node>{
 		return Integer.compare(-ourDist, -theirDist);
 	}
 
+    boolean checkWall(int wall){
+        return (walls & wall) != 0;
+    }
+
+    static boolean wallBetween(Node a, Node b){
+        int deltaX = a.indexX - b.indexX;
+        int deltaY = a.indexY - b.indexY;
+        if (deltaX == -1 && (a.checkWall(RIGHT) || b.checkWall(LEFT))) return true;
+        if (deltaX == 1 && (a.checkWall(LEFT) || b.checkWall(RIGHT)))return true;
+        if (deltaY == -1 && (a.checkWall(DOWN) || b.checkWall(UP))) return true;
+        if (deltaY == 1 && (a.checkWall(UP) || b.checkWall(DOWN))) return true;
+
+        return false;
+    }
 }
