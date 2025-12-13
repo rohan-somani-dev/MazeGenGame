@@ -8,7 +8,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Stack;
 
@@ -168,20 +167,32 @@ public class Grid extends JPanel {
         return out;
     }
 
+    ArrayList<Node> validateNeighbours(ArrayList<Node> nodes, boolean mazeGen){
+        ArrayList<Node> out = new ArrayList<>();
+        for (Node n : nodes){
+            if (mazeGen) {
+                if (!n.mazeVisited) out.add(n);
+            } else {
+                if (!n.pathVisited) out.add(n);
+            }
+        }
+
+
+        return out;
+    }
+
     Node getRandomNeighbour(Node n) {
-        Node[] neighbours = getNeighbours(n);
-        if (neighbours != null){
-        	return neighbours[random.nextInt(neighbours.length)];
+        ArrayList<Node> neighbours = getNeighbours(n);
+        ArrayList<Node> validated = validateNeighbours(neighbours, true);
+        if (validated != null && !validated.isEmpty()){
+        	return validated.get(random.nextInt(validated.size()));
         }
         return null;
     }
 
-    Node getNode(int[] coords) {
-        return nodes[coords[0]][coords[1]];
-        
-    }
+
     
-    Node[] getNeighbours(Node n){
+    ArrayList<Node> getNeighbours(Node n){
     	int x = n.indexX;
     	int y = n.indexY;
     	ArrayList<Node> neighbours = new ArrayList<>();
@@ -190,30 +201,21 @@ public class Grid extends JPanel {
             int currX = x + offset[0];
             int currY = y + offset[1];
             if (currX >= 0 && currX < gridSize && currY >= 0 && currY < gridSize) {
-            	Node curr = nodes[currY][currX];
-                neighbours.add(curr);
+                neighbours.add(nodes[currY][currX]);
             }
         }
         
-        Node[] neighboursOut = new Node[neighbours.size()]; 
         if (!neighbours.isEmpty()) {
-            neighbours.toArray(neighboursOut);
-            return neighboursOut;
+            return neighbours;
         } else {
         	return null;
         }
     }
     
-    
-    public void GreedyBFS(){
-    	start.pathVisited = true; 
-//    	PriorityQueue<Node> queue = new PriorityQueue<>();
-//
-//    	while (!queue.isEmpty()) {
-//            continue;
-//    	}
+//    TODO
+    public void GreedyBFS() {
+        start.pathVisited = true;
     }
-    
     
     
     @Override
