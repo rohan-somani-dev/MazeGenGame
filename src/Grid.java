@@ -100,10 +100,10 @@ public class Grid extends JPanel {
 
                 stack.push(nextNode);
 
-                if (Setup.sleepTime > 0) {
+                if (Setup.mazeSleepTime > 0) {
                     try {
                         if (testingInterruptedException) throw new InterruptedException("TESTING ERROR");
-                        Thread.sleep(Setup.sleepTime);
+                        Thread.sleep(Setup.mazeSleepTime);
                     } catch (InterruptedException e) {
                         Setup.handleError(e);
                         return Setup.INTERRUPTED_ERROR; //error code
@@ -125,6 +125,7 @@ public class Grid extends JPanel {
         for (int y = 0; y < gridSize; y++) {
             for (int x = 0; x < gridSize; x++) {
                 nodes[y][x].isTarget = false;
+                nodes[y][x].mazeVisited = false;
             }
         }
 
@@ -178,6 +179,11 @@ public class Grid extends JPanel {
         return out;
     }
 
+    public Node getNodeOrNull(int i, int j) {
+        if (i < 0 || j < 0 || i >= gridSize || j >= gridSize) return null;
+        return nodes[j][i];
+    }
+
     Node getRandomNeighbour(Node n) {
         ArrayList<Node> neighbours = getNeighbours(n);
         ArrayList<Node> validated = validateNeighbours(neighbours, true);
@@ -203,7 +209,6 @@ public class Grid extends JPanel {
         return neighbours;
     }
 
-    //    TODO
     public void GreedyBFS() {
         start.pathVisited = true;
         PriorityQueue<Node> queue = new PriorityQueue<>(
@@ -216,14 +221,14 @@ public class Grid extends JPanel {
             ArrayList<Node> neighbours = getNeighbours(curr);
             if (neighbours == null) continue;
             for (Node neighbour : neighbours) {
-                if (!neighbour.pathVisited && !Node.wallBetween(curr, neighbour)) {
+                if (!neighbour.pathVisited && Node.canWalk(curr, neighbour)) {
                     neighbour.parent = curr;
                     neighbour.pathVisited = true;
                     queue.add(neighbour);
                     if (neighbour.isEnd) {
                         try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e){
+                            Thread.sleep(Setup.sleepTimeBetweenPathRetrace);
+                        } catch (InterruptedException e) {
                             Setup.handleError(e);
                         }
                         pathFound();
@@ -244,11 +249,15 @@ public class Grid extends JPanel {
 
     void pathFound() {
         retrace();
+        for (Node[] row : nodes) {
+            for (Node node : row) {
+                if (!node.onPath && !node.isEnd && !node.isStart) node.clearFlags();
+            }
+        }
     }
 
     void retrace() {
         Node pathNode = end;
-        System.out.println("RETRACING");
         while (pathNode != null) {
             pathNode.onPath = true;
             pathNode = pathNode.parent;
@@ -261,6 +270,36 @@ public class Grid extends JPanel {
             }
         }
 
+    }
+
+    public boolean movePlayer(Player player, Player.Direction dir) {
+        Node curr = player.position;
+
+        int dx = 0;
+        int dy = 0;
+        switch (dir) {
+            case UP:
+                dy = -1;
+                break;
+            case DOWN:
+                dy = 1;
+                break;
+            case LEFT:
+                dx = -1;
+                break;
+            case RIGHT:
+                dx = 1;
+                break;
+
+        }
+        Node next = getNodeOrNull(curr.indexX + dx, curr.indexY + dy);
+        if (next == null) return false;
+        if (!Node.canWalk(curr, next)) return false;
+
+        curr.isPlayer = false;
+        next.isPlayer = true;
+        player.position = next;
+        return true;
     }
 
     @Override

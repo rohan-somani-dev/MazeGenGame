@@ -6,6 +6,7 @@
  */
 
 import javax.swing.*;
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -16,6 +17,9 @@ public class Game {
     static Grid grid;
 
     static boolean mazeFinished;
+    static Player player;
+
+
 
     public static void main(String[] args) {
 
@@ -23,8 +27,8 @@ public class Game {
         start();
     }
 
-    static void start(){
-        setFrame();      	
+    static void start() {
+        setFrame();
 //        grid.testingInterruptedException = true;
         Thread mazeThread = new Thread(() -> {
             Game.handleMazeGen();
@@ -35,25 +39,40 @@ public class Game {
 
     private static void onFinished() {
         mazeFinished = true;
+        player = new Player(grid.start);
     }
 
-    static void handleMazeGen(){
-    	int result = grid.genMaze();
-    	if (result == Setup.INTERRUPTED_ERROR){
-    		System.out.println("UNABLE TO ANIMATE. DEFAULTING TO NO ANIMATION");
-    		Setup.sleepTime = 0;
-    		handleMazeGen();
-    	} else if (result != 0){
-    		System.out.println("error in maze gen");
-    	}
-    }
-
-    static void handleKeyPress(KeyEvent e){
-        if (mazeFinished && e.getKeyCode() == KeyEvent.VK_SPACE) {
-            new Thread(grid::GreedyBFS).start();
+    static void handleMazeGen() {
+        int result = grid.genMaze();
+        if (result == Setup.INTERRUPTED_ERROR) {
+            System.out.println("UNABLE TO ANIMATE. DEFAULTING TO NO ANIMATION");
+            Setup.mazeSleepTime = 0;
+            handleMazeGen();
+        } else if (result != 0) {
+            System.out.println("error in maze gen");
         }
     }
-    
+
+
+
+    static void handleKeyPress(KeyEvent e) {
+        if (!mazeFinished) return;
+        int key = e.getKeyCode();
+
+        Player.Direction move = Setup.KEY_BINDINGS.get(key);
+        if (move != null){
+            if (grid.movePlayer(player, move)){
+                grid.repaint();
+            }
+            return;
+        }
+
+        if (key == KeyEvent.VK_SPACE){
+            new Thread(grid::GreedyBFS).start();
+        }
+
+    }
+
     static void setFrame() {
 //        init frame
         frame = new JFrame("MazeGen");

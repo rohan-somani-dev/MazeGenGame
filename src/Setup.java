@@ -6,8 +6,13 @@
  */
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.util.Map;
 
 public class Setup {
+
+    //keybindings
+    public static final String START_PATH = "SPACE";
 
     //generic colors
     public static final Color WALL_COLOR = new Color(0xFFFFFF);
@@ -24,13 +29,31 @@ public class Setup {
     public static final Color PATH_COLOR = new Color(0xFF8787);
     public static final Color PATH_LOOKING_COLOR = new Color(0xFFB4B4);
 
-    public static final int GRID_SIZE = 50;
+    public static final int GRID_SIZE = 10;
     public static final int WINDOW_SIZE = 1000;
     public static final int FUNCTION_SUCCESS = 0;
     public static final int INTERRUPTED_ERROR = 1;
 
-    public static int sleepTime = 1;
-    public static int pathSleepTime = 1;
+    //player colors
+    public static final Color PLAYER_COLOR = new Color(0xFFFFFF);
+
+    public static int mazeSleepTime = 0;
+    public static int pathSleepTime = 0;
+    public static int sleepTimeBetweenPathRetrace = 0;
+
+    static final Map<Integer, Player.Direction> KEY_BINDINGS = Map.of(
+            KeyEvent.VK_W, Player.Direction.UP,
+            KeyEvent.VK_UP, Player.Direction.UP,
+
+            KeyEvent.VK_A, Player.Direction.LEFT,
+            KeyEvent.VK_LEFT, Player.Direction.LEFT,
+
+            KeyEvent.VK_D, Player.Direction.RIGHT,
+            KeyEvent.VK_RIGHT, Player.Direction.RIGHT,
+
+            KeyEvent.VK_S, Player.Direction.DOWN,
+            KeyEvent.VK_DOWN, Player.Direction.DOWN
+    );
 
     private Setup() {
     }
