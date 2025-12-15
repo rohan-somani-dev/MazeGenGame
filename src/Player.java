@@ -1,7 +1,5 @@
 public class Player {
 
-    static final String movementKeys = "WASDLEFTRIGHTUPDOWN";
-
     Node position;
 
     public Player(Node start) {

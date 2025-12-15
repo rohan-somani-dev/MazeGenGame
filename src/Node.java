@@ -5,7 +5,10 @@
  * Date: 2025-12-10
  */
 
+import helpers.CellState;
+
 import java.awt.*;
+import java.util.Map;
 
 public class Node implements Comparable<Node> {
 
@@ -14,6 +17,7 @@ public class Node implements Comparable<Node> {
     static final int DOWN = 0b0100;
     static final int LEFT = 0b1000;
     int walls = 0b1111; // one bit per wall
+    int indexX;
     /*
      to remove a wall do &= ~value
      to add a wall do + value;
@@ -22,33 +26,33 @@ public class Node implements Comparable<Node> {
      walls += UP adds the top wall
      make sure not to add a wall twice will lead to overflow.
     */
-
-    int indexX;
     int indexY;
-
-//    maze gen states
+    //    maze gen states
     boolean mazeVisited;
-    boolean isTarget;
     Node target;
-
-// identities
-    boolean isEnd;
-    boolean isStart;
-
-//debug
-    boolean debug;
-
-//path states
+    //path states
     boolean pathVisited;
     boolean onPath;
     Node parent;
+    Map<CellState, Color> COLORS = Map.of(
+            CellState.PLAYER, Setup.PLAYER_COLOR,
+            CellState.PATH, Setup.PATH_COLOR,
+            CellState.PATH_LOOKING, Setup.PATH_LOOKING_COLOR,
+            CellState.END, Setup.END_COLOR,
+            CellState.START, Setup.START_COLOR,
+            CellState.DEBUG, Setup.DEBUG_COLOR,
+            CellState.TARGET, Setup.TARGET_COLOR,
+            CellState.VISITED, Setup.VISITED_COLOR,
+            CellState.BACKGROUND, Setup.BACKGROUND_COLOR
+    );
 
-//occupancy
-    public boolean isPlayer;
+    private CellState overlayState;
+    private CellState baseState;
 
     public Node(int indexX, int indexY) {
         this.indexX = indexX;
         this.indexY = indexY;
+        this.setBaseState(CellState.BACKGROUND);
     }
 
     static boolean canWalk(Node a, Node b) {
@@ -60,6 +64,23 @@ public class Node implements Comparable<Node> {
         return deltaY != 1 || (!a.checkWall(UP) && !b.checkWall(DOWN));
     }
 
+    public CellState getBaseState() {
+        return baseState;
+    }
+
+    public void setBaseState(CellState newBaseState) {
+        this.baseState = newBaseState;
+    }
+
+    public void setOverlayState(CellState newState) {
+        this.overlayState = newState;
+    }
+
+    public CellState getState() {
+        if (overlayState != null) return overlayState;
+        return baseState;
+    }
+
     /**
      * Draws the grid with each node having a wall.
      *
@@ -69,23 +90,17 @@ public class Node implements Comparable<Node> {
      * @param isLastCol is it the last column in the array?
      */
     public void draw(Graphics g, int size, boolean isLastRow, boolean isLastCol) {
-//        TODO: CLEAN UP IFS. ADD ENUM? OR CLASS?
-
-        Color fillColor = mazeVisited ? Setup.VISITED_COLOR : Setup.BACKGROUND_COLOR;
-        if (isTarget) fillColor = Setup.TARGET_COLOR;
-        if (debug) fillColor = Setup.DEBUG_COLOR;
-        if (isStart) fillColor = Setup.START_COLOR;
-        if (isEnd) fillColor = Setup.END_COLOR;
-        if (pathVisited) fillColor = Setup.PATH_LOOKING_COLOR;
-        if (onPath) fillColor = Setup.PATH_COLOR;
-        if (isPlayer) fillColor = Setup.PLAYER_COLOR;
-        g.setColor(fillColor);
+        CellState currState = getState();
+        g.setColor(COLORS.get(currState));
 
         int x = indexX * size;
         int y = indexY * size;
 
-//        fill back
+        if (currState == CellState.PLAYER) {
+            drawPlayer(x, y, size, g);
+        } else {
             g.fillRect(x, y, size, size);
+        }
 
 //        draw walls
         g.setColor(Setup.WALL_COLOR);
@@ -96,10 +111,30 @@ public class Node implements Comparable<Node> {
 
     }
 
-    public int getManhattanDistance(Node other) {
-        return Math.abs(other.indexX - indexX) + Math.abs(other.indexY + indexY);
+    private void drawPlayer(int x, int y, int size, Graphics g) {
+//        draw background
+        g.setColor(COLORS.get(baseState));
+        g.fillRect(x, y, size, size);
+
+        int newSize = size - Setup.PLAYER_SHRINK * 2;
+
+//        draw player
+        g.setColor(COLORS.get(CellState.PLAYER));
+        g.fillRect(x + Setup.PLAYER_SHRINK, y + Setup.PLAYER_SHRINK, newSize, newSize);
+
+//        draw little face :)
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setComposite(AlphaComposite.SrcOver); //allow transparency
+
+        g2.drawImage(Setup.SMILE, x + Setup.PLAYER_SHRINK, y + Setup.PLAYER_SHRINK, newSize, newSize, null);
+
+        g2.dispose();
+
     }
 
+    public int getManhattanDistance(Node other) {
+        return Math.abs(other.indexX - indexX) + Math.abs(other.indexY - indexY);
+    }
 
     @Override
     public int compareTo(Node other) {
@@ -112,12 +147,8 @@ public class Node implements Comparable<Node> {
         return (walls & wall) != 0;
     }
 
-    public void clearFlags() {
-        mazeVisited = false;
-        isTarget = false;
-        pathVisited = false;
-        onPath = false;
-        isEnd = false;
-        isStart = false;
+    public void clearOverlay() {
+        this.setOverlayState(null);
     }
+
 }

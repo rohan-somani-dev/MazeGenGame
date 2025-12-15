@@ -5,6 +5,8 @@
  * Date: 2025-12-10
  */
 
+import helpers.CellState;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -46,8 +48,8 @@ public class Grid extends JPanel {
 
         random = new Random();
 
-        start = nodes[gridSize - 1][0];
-        start.isStart = true;
+        start = nodes[0][0];
+        start.setBaseState(CellState.START);
 
     }
 
@@ -73,8 +75,8 @@ public class Grid extends JPanel {
             if (nextNode != null) {
                 nextNode.mazeVisited = true;
 
-                node.isTarget = false;
-                nextNode.isTarget = true;
+                node.setOverlayState(CellState.VISITED);
+                nextNode.setOverlayState(CellState.TARGET);
 
                 SwingUtilities.invokeLater(this::repaint);
 
@@ -115,7 +117,8 @@ public class Grid extends JPanel {
                 stack.pop();
             }
 
-            node.isTarget = false;
+            node.setOverlayState(CellState.VISITED);
+
         }
         mazeGenFinished();
         return Setup.FUNCTION_SUCCESS;
@@ -124,14 +127,15 @@ public class Grid extends JPanel {
     void mazeGenFinished() {
         for (int y = 0; y < gridSize; y++) {
             for (int x = 0; x < gridSize; x++) {
-                nodes[y][x].isTarget = false;
-                nodes[y][x].mazeVisited = false;
+                nodes[y][x].clearOverlay();
             }
         }
+
 
         Node topChoice = start;
         int maxDistance = 0;
         ArrayList<Node> deadEnds = getDeadEnds();
+//        FIXME: always horizontal rather than diagonal from start.
         for (Node n : deadEnds) {
             int currDist = start.getManhattanDistance(n);
             if (currDist > maxDistance) {
@@ -145,7 +149,7 @@ public class Grid extends JPanel {
 
     void setEnd(Node _end) {
         end = _end;
-        end.isEnd = true;
+        end.setBaseState(CellState.END);
 
         for (Node[] row : nodes) {
             for (Node n : row) {
@@ -166,19 +170,6 @@ public class Grid extends JPanel {
         return out;
     }
 
-    ArrayList<Node> validateNeighbours(ArrayList<Node> nodes, boolean mazeGen) {
-        ArrayList<Node> out = new ArrayList<>();
-        for (Node n : nodes) {
-            if (mazeGen) {
-                if (!n.mazeVisited) out.add(n);
-            } else {
-                if (!n.pathVisited) out.add(n);
-            }
-        }
-
-        return out;
-    }
-
     public Node getNodeOrNull(int i, int j) {
         if (i < 0 || j < 0 || i >= gridSize || j >= gridSize) return null;
         return nodes[j][i];
@@ -186,8 +177,13 @@ public class Grid extends JPanel {
 
     Node getRandomNeighbour(Node n) {
         ArrayList<Node> neighbours = getNeighbours(n);
-        ArrayList<Node> validated = validateNeighbours(neighbours, true);
-        if (validated != null && !validated.isEmpty()) {
+        ArrayList<Node> validated = new ArrayList<>();
+
+        for (Node neighbour : neighbours) {
+            if (!(neighbour.getState() == CellState.VISITED)) validated.add(neighbour);
+        }
+
+        if (!validated.isEmpty()) {
             return validated.get(random.nextInt(validated.size()));
         }
         return null;
@@ -225,7 +221,7 @@ public class Grid extends JPanel {
                     neighbour.parent = curr;
                     neighbour.pathVisited = true;
                     queue.add(neighbour);
-                    if (neighbour.isEnd) {
+                    if (neighbour.getState() == CellState.END) {
                         try {
                             Thread.sleep(Setup.sleepTimeBetweenPathRetrace);
                         } catch (InterruptedException e) {
@@ -249,28 +245,30 @@ public class Grid extends JPanel {
 
     void pathFound() {
         retrace();
-        for (Node[] row : nodes) {
-            for (Node node : row) {
-                if (!node.onPath && !node.isEnd && !node.isStart) node.clearFlags();
-            }
-        }
     }
 
     void retrace() {
         Node pathNode = end;
         while (pathNode != null) {
             pathNode.onPath = true;
+            CellState base = pathNode.getBaseState();
+            if (base != CellState.START && base != CellState.END) pathNode.setBaseState(CellState.PATH);
             pathNode = pathNode.parent;
-            SwingUtilities.invokeLater(this::repaint);
 
             try {
                 Thread.sleep(Setup.pathSleepTime);
             } catch (InterruptedException _) {
-                System.out.println("ERRORRRRRRR");
+                System.out.println("ERROR");
             }
         }
+    }
+
+    void initPlayer(Player player){
+        Node p = player.position;
+        nodes[p.indexY][p.indexX].setOverlayState(CellState.PLAYER);
 
     }
+
 
     public boolean movePlayer(Player player, Player.Direction dir) {
         Node curr = player.position;
@@ -296,8 +294,8 @@ public class Grid extends JPanel {
         if (next == null) return false;
         if (!Node.canWalk(curr, next)) return false;
 
-        curr.isPlayer = false;
-        next.isPlayer = true;
+        curr.clearOverlay();
+        next.setOverlayState(CellState.PLAYER);
         player.position = next;
         return true;
     }

@@ -6,7 +6,6 @@
  */
 
 import javax.swing.*;
-import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -40,6 +39,8 @@ public class Game {
     private static void onFinished() {
         mazeFinished = true;
         player = new Player(grid.start);
+        grid.initPlayer(player);
+        grid.repaint();
     }
 
     static void handleMazeGen() {
@@ -68,6 +69,7 @@ public class Game {
         }
 
         if (key == KeyEvent.VK_SPACE){
+//            TODO: set start to player pos, make the path generate from there; allow player to regen path as much as they want
             new Thread(grid::GreedyBFS).start();
         }
 

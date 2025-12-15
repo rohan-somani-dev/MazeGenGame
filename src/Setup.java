@@ -5,10 +5,15 @@
  * Date: 2025-12-10
  */
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
+//TODO: ADD THEMES
 public class Setup {
 
     //keybindings
@@ -25,8 +30,8 @@ public class Setup {
     public static final Color START_COLOR = new Color(0x6266C2);
     public static final Color END_COLOR = new Color(0xA673B6);
 
-    //a* colors
-    public static final Color PATH_COLOR = new Color(0xFF8787);
+    //pathfind colors
+    public static final Color PATH_COLOR = new Color(0x824343);
     public static final Color PATH_LOOKING_COLOR = new Color(0xFFB4B4);
 
     public static final int GRID_SIZE = 10;
@@ -34,13 +39,10 @@ public class Setup {
     public static final int FUNCTION_SUCCESS = 0;
     public static final int INTERRUPTED_ERROR = 1;
 
-    //player colors
-    public static final Color PLAYER_COLOR = new Color(0xFFFFFF);
-
-    public static int mazeSleepTime = 0;
-    public static int pathSleepTime = 0;
-    public static int sleepTimeBetweenPathRetrace = 0;
-
+    //player settings
+    public static final Color PLAYER_COLOR = new Color(0xF5B2B2);
+    public static final Color PLAYER_FEATURE_COLOR = new Color(0xFFFFFF);
+    public static final int PLAYER_SHRINK = 10;
     static final Map<Integer, Player.Direction> KEY_BINDINGS = Map.of(
             KeyEvent.VK_W, Player.Direction.UP,
             KeyEvent.VK_UP, Player.Direction.UP,
@@ -54,6 +56,21 @@ public class Setup {
             KeyEvent.VK_S, Player.Direction.DOWN,
             KeyEvent.VK_DOWN, Player.Direction.DOWN
     );
+    static final BufferedImage SMILE;
+    public static int mazeSleepTime = 0;
+    public static int pathSleepTime = 0;
+    public static int sleepTimeBetweenPathRetrace = 0;
+
+    static {
+        BufferedImage img = null;
+        try {
+            File f = new File("smile.png");
+            img = ImageIO.read(f);
+        } catch (IOException e) {
+            Setup.handleError(e);
+        }
+        SMILE = img;
+    }
 
     private Setup() {
     }
