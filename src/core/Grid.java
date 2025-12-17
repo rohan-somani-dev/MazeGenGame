@@ -5,7 +5,7 @@
  * Date: 2025-12-10
  */
 
-import helpers.CellState;
+import utilities.CellState;
 
 import javax.swing.*;
 import java.awt.*;
