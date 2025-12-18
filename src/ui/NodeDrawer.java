@@ -10,13 +10,10 @@ import core.Node;
 import utilities.CellState;
 
 import java.awt.*;
-import java.util.Map;
 
 import static config.Setup.COLORS;
 
 public class NodeDrawer {
-
-
 
     public static void draw(Graphics g, Node n, int size, boolean isLastRow, boolean isLastCol) {
         CellState state = n.getState();
@@ -41,25 +38,23 @@ public class NodeDrawer {
 
     private static void drawPlayer(Node n, int x, int y, int size, Graphics g) {
 //        onUpdate background
-            g.setColor(COLORS.get(n.getBaseState()));
-            g.fillRect(x, y, size, size);
+        g.setColor(COLORS.get(n.getBaseState()));
+        g.fillRect(x, y, size, size);
 
-            int newSize = size - Setup.PLAYER_SHRINK * 2;
+        int newSize = size - Setup.PLAYER_SHRINK * 2;
 
 //        onUpdate player
-            g.setColor(COLORS.get(CellState.PLAYER));
-            g.fillRect(x + Setup.PLAYER_SHRINK, y + Setup.PLAYER_SHRINK, newSize, newSize);
+        g.setColor(COLORS.get(CellState.PLAYER));
+        g.fillRect(x + Setup.PLAYER_SHRINK, y + Setup.PLAYER_SHRINK, newSize, newSize);
 
 //        onUpdate little face :)
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setComposite(AlphaComposite.SrcOver); //allow transparency
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setComposite(AlphaComposite.SrcOver); //allow transparency
 
-            g2.drawImage(Setup.SMILE, x + Setup.PLAYER_SHRINK, y + Setup.PLAYER_SHRINK, newSize, newSize, null);
+        g2.drawImage(Setup.SMILE, x + Setup.PLAYER_SHRINK, y + Setup.PLAYER_SHRINK, newSize, newSize, null);
 
-            g2.dispose();
-
+        g2.dispose();
 
     }
-
 
 }

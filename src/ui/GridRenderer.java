@@ -26,13 +26,9 @@ public class GridRenderer extends JPanel implements Renderable {
         setOpaque(true);
 
     }
-    @Override //overriding from renderable
-    public void initUI(){
-    }
 
-    @Override
-    public JComponent getComponent() {
-        return this;
+    @Override //overriding from renderable
+    public void initUI() {
     }
 
     @Override
@@ -41,13 +37,18 @@ public class GridRenderer extends JPanel implements Renderable {
     }
 
     @Override
-    public void paintComponent(Graphics g){
+    public JComponent getComponent() {
+        return this;
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
         int minDimension = Math.min(getWidth(), getHeight());
         nodeSize = minDimension / grid.gridSize;
 
-        for (Node node : grid.getNodes()){
+        for (Node node : grid.getNodes()) {
             NodeDrawer.draw(g, node, nodeSize, false, false);
         }
     }

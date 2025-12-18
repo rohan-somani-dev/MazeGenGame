@@ -239,8 +239,9 @@ public class Grid implements Updater {
 
             try {
                 Thread.sleep(Setup.pathSleepTime);
-            } catch (InterruptedException _) {
+            } catch (InterruptedException e) {
                 System.out.println("ERROR");
+                Setup.handleError(e);
             }
         }
     }

@@ -25,14 +25,14 @@ public class TEST extends JPanel implements Renderable {
     }
 
     @Override
+    public JComponent getComponent() {
+        return this;
+    }
+
+    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(Color.GREEN);
         g.fillRect(50, 50, 500, 300);
-    }
-
-    @Override
-    public JComponent getComponent() {
-        return this;
     }
 }

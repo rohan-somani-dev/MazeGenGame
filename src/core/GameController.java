@@ -9,7 +9,6 @@ import config.Setup;
 import entities.Player;
 import ui.UIController;
 
-import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -21,15 +20,16 @@ public class GameController implements UpdateListener {
     boolean mazeFinished;
     Player player;
 
-
-    public void main(String[] args) {
+    public GameController() {
 
         grid = new Grid();
         grid.addListener(this);
         UI = new UIController(grid);
 
+        System.out.println(System.getProperty("java.version"));
+
+//        FIXME: not updating with path? ??
         setupInput();
-        start();
     }
 
     private void setupInput() {
@@ -85,7 +85,6 @@ public class GameController implements UpdateListener {
         }
 
     }
-
 
     @Override
     public void onUpdate(int code) {
