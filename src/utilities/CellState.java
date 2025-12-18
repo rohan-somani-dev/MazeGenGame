@@ -1,4 +1,4 @@
-package helpers;
+package utilities;
 
 public enum CellState {
     PLAYER,

@@ -7,40 +7,41 @@ package core;
 
 import config.Setup;
 import entities.Player;
-import ui.GridRenderer;
-import ui.PlayerRenderer;
+import ui.UIController;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class Game implements UpdateListener {
+public class GameController implements UpdateListener {
 
-    JFrame frame;
+    private static UIController UI;
     Grid grid;
 
     boolean mazeFinished;
     Player player;
 
-    GridRenderer gridRenderer;
-    PlayerRenderer playerRenderer;
 
     public void main(String[] args) {
 
-        grid = new Grid(Setup.GRID_SIZE);
+        grid = new Grid();
         grid.addListener(this);
-        setupRenderers();
+        UI = new UIController(grid);
+
+        setupInput();
+        start();
     }
 
-    private void setupRenderers() {
-        gridRenderer = new GridRenderer(grid);
-        start();
-        gridRenderer.initUI();
+    private void setupInput() {
+        UI.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                handleKeyPress(e);
+            }
+        });
     }
 
     void start() {
-        setFrame();
         Thread mazeThread = new Thread(() -> {
             handleMazeGen();
             onFinished();
@@ -52,7 +53,7 @@ public class Game implements UpdateListener {
         mazeFinished = true;
         player = new Player(grid.start);
         grid.initPlayer(player);
-        gridRenderer.repaint();
+        UI.update(Setup.MAZE_FINISHED);
     }
 
     void handleMazeGen() {
@@ -73,7 +74,7 @@ public class Game implements UpdateListener {
         Player.Direction move = Setup.KEY_BINDINGS.get(key);
         if (move != null) {
             if (grid.movePlayer(player, move)) {
-                gridRenderer.repaint();
+                UI.update();
             }
             return;
         }
@@ -85,33 +86,10 @@ public class Game implements UpdateListener {
 
     }
 
-    void setFrame() {
-//        init frame
-        frame = new JFrame("MazeGen");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        gridRenderer.setPreferredSize(new Dimension(Setup.WINDOW_SIZE, Setup.WINDOW_SIZE));
-
-//        TODO: CLEANUP
-        gridRenderer.setFocusable(false);
-        frame.add(gridRenderer);
-        frame.setFocusable(true);
-        frame.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                handleKeyPress(e);
-            }
-        });
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-
-    }
-
 
     @Override
-    public void onGameUpdated() {
-        gridRenderer.repaint();
-        gridRenderer.test();
+    public void onUpdate(int code) {
+        UI.update(code);
     }
+
 }

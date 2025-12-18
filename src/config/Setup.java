@@ -1,9 +1,12 @@
-
+package config;
 /*
  * Author: RohanSomani
  * Name: Config
  * Date: 2025-12-10
  */
+
+import entities.Player;
+import utilities.CellState;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -16,34 +19,30 @@ import java.util.Map;
 //TODO: ADD THEMES
 public class Setup {
 
-    //keybindings
-    public static final String START_PATH = "SPACE";
-
-    //generic colors
+    //    LISTENER CODES
+    public static final int MAZE_FINISHED = 0b0100;
+    public static final int PATH_FINISHED = 0b1000;
+    public static final int ALL = 0b1111;
+    //    generic colors
     public static final Color WALL_COLOR = new Color(0xFFFFFF);
     public static final Color TARGET_COLOR = new Color(0xCC758C);
     public static final Color BACKGROUND_COLOR = new Color(0x3C1620);
     public static final Color DEBUG_COLOR = new Color(255, 0, 0);
-
-    //maze colors
+    //    maze colors
     public static final Color VISITED_COLOR = new Color(0x02182B);
     public static final Color START_COLOR = new Color(0x6266C2);
     public static final Color END_COLOR = new Color(0xA673B6);
-
-    //pathfind colors
+    //    pathfind colors
     public static final Color PATH_COLOR = new Color(0x824343);
     public static final Color PATH_LOOKING_COLOR = new Color(0xFFB4B4);
-
     public static final int GRID_SIZE = 10;
     public static final int WINDOW_SIZE = 1000;
     public static final int FUNCTION_SUCCESS = 0;
     public static final int INTERRUPTED_ERROR = 1;
-
-    //player settings
+    //    player settings
     public static final Color PLAYER_COLOR = new Color(0xF5B2B2);
-    public static final Color PLAYER_FEATURE_COLOR = new Color(0xFFFFFF);
     public static final int PLAYER_SHRINK = 10;
-    static final Map<Integer, Player.Direction> KEY_BINDINGS = Map.of(
+    public static final Map<Integer, Player.Direction> KEY_BINDINGS = Map.of(
             KeyEvent.VK_W, Player.Direction.UP,
             KeyEvent.VK_UP, Player.Direction.UP,
 
@@ -56,7 +55,27 @@ public class Setup {
             KeyEvent.VK_S, Player.Direction.DOWN,
             KeyEvent.VK_DOWN, Player.Direction.DOWN
     );
-    static final BufferedImage SMILE;
+
+    public static final Map<CellState, Color> COLORS = Map.of(
+            CellState.PLAYER, Setup.PLAYER_COLOR,
+            CellState.PATH, Setup.PATH_COLOR,
+            CellState.PATH_LOOKING, Setup.PATH_LOOKING_COLOR,
+            CellState.END, Setup.END_COLOR,
+            CellState.START, Setup.START_COLOR,
+            CellState.DEBUG, Setup.DEBUG_COLOR,
+            CellState.TARGET, Setup.TARGET_COLOR,
+            CellState.VISITED, Setup.VISITED_COLOR,
+            CellState.BACKGROUND, Setup.BACKGROUND_COLOR
+    );
+
+
+    public static final BufferedImage SMILE;
+
+    // constants
+    public static final int UP = 0b0001;
+    public static final int RIGHT = 0b0010;
+    public static final int DOWN = 0b0100;
+    public static final int LEFT = 0b1000;
     public static int mazeSleepTime = 0;
     public static int pathSleepTime = 0;
     public static int sleepTimeBetweenPathRetrace = 0;
@@ -64,7 +83,7 @@ public class Setup {
     static {
         BufferedImage img = null;
         try {
-            File f = new File("smile.png");
+            File f = new File("../resources/smile.png");
             img = ImageIO.read(f);
         } catch (IOException e) {
             Setup.handleError(e);

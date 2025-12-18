@@ -1,0 +1,65 @@
+package ui;
+/*
+ * Author: RohanSomani
+ * Name: NodeRenderer
+ * Date: 2025-12-16
+ */
+
+import config.Setup;
+import core.Node;
+import utilities.CellState;
+
+import java.awt.*;
+import java.util.Map;
+
+import static config.Setup.COLORS;
+
+public class NodeDrawer {
+
+
+
+    public static void draw(Graphics g, Node n, int size, boolean isLastRow, boolean isLastCol) {
+        CellState state = n.getState();
+        g.setColor(COLORS.get(state));
+
+        int x = n.indexX * size;
+        int y = n.indexY * size;
+
+        if (state == CellState.PLAYER) {
+            drawPlayer(n, x, y, size, g);
+        } else {
+            g.fillRect(x, y, size, size);
+        }
+
+        g.setColor(Setup.WALL_COLOR);
+        if (n.checkWall(Setup.UP) || n.indexY == 0) g.drawLine(x, y, x + size, y);
+        if (n.checkWall(Setup.LEFT) || n.indexX == 0) g.drawLine(x, y, x, y + size);
+        if (n.checkWall(Setup.DOWN) || isLastCol) g.drawLine(x, y + size - 1, x + size - 1, y + size - 1);
+        if (n.checkWall(Setup.RIGHT) || isLastRow) g.drawLine(x + size - 1, y, x + size - 1, y + size - 1);
+
+    }
+
+    private static void drawPlayer(Node n, int x, int y, int size, Graphics g) {
+//        onUpdate background
+            g.setColor(COLORS.get(n.getBaseState()));
+            g.fillRect(x, y, size, size);
+
+            int newSize = size - Setup.PLAYER_SHRINK * 2;
+
+//        onUpdate player
+            g.setColor(COLORS.get(CellState.PLAYER));
+            g.fillRect(x + Setup.PLAYER_SHRINK, y + Setup.PLAYER_SHRINK, newSize, newSize);
+
+//        onUpdate little face :)
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setComposite(AlphaComposite.SrcOver); //allow transparency
+
+            g2.drawImage(Setup.SMILE, x + Setup.PLAYER_SHRINK, y + Setup.PLAYER_SHRINK, newSize, newSize, null);
+
+            g2.dispose();
+
+
+    }
+
+
+}

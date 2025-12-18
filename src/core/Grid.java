@@ -1,26 +1,25 @@
-
+package core;
 /*
  * Author: RohanSomani
- * Name: Grid
+ * Name: core.Grid
  * Date: 2025-12-10
  */
 
+import config.Setup;
+import entities.Player;
 import utilities.CellState;
+import utilities.Updater;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Stack;
 
 //TODO: serialize, allow to save mazes to file to be opened later. https://www.baeldung.com/java-serialization
-public class Grid extends JPanel {
-    Node[][] nodes;
-
-    int gridSize;
-    int nodeSize = 10; //default 10
-
+//TODO: CLEAN THIS SHIT UP
+public class Grid implements Updater {
+    public final int gridSize = Setup.GRID_SIZE;
+    public Node[][] nodes;
     Random random;
 
     Node start;
@@ -30,13 +29,8 @@ public class Grid extends JPanel {
 
     /**
      * Initialize grid.
-     *
-     * @param gridSize the size of the x and y.
      */
-    public Grid(int gridSize) {
-        this.gridSize = gridSize;
-
-        this.setBackground(Setup.BACKGROUND_COLOR);
+    public Grid() {
 
         nodes = new Node[gridSize][gridSize];
 
@@ -51,16 +45,6 @@ public class Grid extends JPanel {
         start = nodes[0][0];
         start.setBaseState(CellState.START);
 
-    }
-
-    public void draw(Graphics g) {
-        for (int y = 0; y < gridSize; y++) {
-            boolean isLastCol = y == gridSize - 1;
-            for (int x = 0; x < gridSize; x++) {
-                boolean isLastRow = x == gridSize - 1;
-                nodes[y][x].draw(g, nodeSize, isLastRow, isLastCol);
-            }
-        }
     }
 
     public int genMaze() {
@@ -78,26 +62,26 @@ public class Grid extends JPanel {
                 node.setOverlayState(CellState.VISITED);
                 nextNode.setOverlayState(CellState.TARGET);
 
-                SwingUtilities.invokeLater(this::repaint);
+                notifyListeners();
 
 //                remove walls
                 int deltaX = nextNode.indexX - node.indexX;
                 int deltaY = nextNode.indexY - node.indexY;
 
                 if (deltaX == 1) {
-                    node.walls &= ~Node.RIGHT;
-                    nextNode.walls &= ~Node.LEFT;
+                    node.walls &= ~Setup.RIGHT;
+                    nextNode.walls &= ~Setup.LEFT;
                 } else if (deltaX == -1) {
-                    node.walls &= ~Node.LEFT;
-                    nextNode.walls &= ~Node.RIGHT;
+                    node.walls &= ~Setup.LEFT;
+                    nextNode.walls &= ~Setup.RIGHT;
                 }
 
                 if (deltaY == 1) {
-                    node.walls &= ~Node.DOWN;
-                    nextNode.walls &= ~Node.UP;
+                    node.walls &= ~Setup.DOWN;
+                    nextNode.walls &= ~Setup.UP;
                 } else if (deltaY == -1) {
-                    node.walls &= ~Node.UP;
-                    nextNode.walls &= ~Node.DOWN;
+                    node.walls &= ~Setup.UP;
+                    nextNode.walls &= ~Setup.DOWN;
                 }
 
                 stack.push(nextNode);
@@ -131,11 +115,9 @@ public class Grid extends JPanel {
             }
         }
 
-
         Node topChoice = start;
         int maxDistance = 0;
         ArrayList<Node> deadEnds = getDeadEnds();
-//        FIXME: always horizontal rather than diagonal from start.
         for (Node n : deadEnds) {
             int currDist = start.getManhattanDistance(n);
             if (currDist > maxDistance) {
@@ -144,7 +126,7 @@ public class Grid extends JPanel {
             }
         }
         setEnd(topChoice);
-        repaint();
+        notifyListeners();
     }
 
     void setEnd(Node _end) {
@@ -232,7 +214,7 @@ public class Grid extends JPanel {
                     }
                 }
             }
-            SwingUtilities.invokeLater(this::repaint);
+            notifyListeners();
             try {
                 Thread.sleep(Setup.pathSleepTime);
             } catch (InterruptedException e) {
@@ -263,12 +245,11 @@ public class Grid extends JPanel {
         }
     }
 
-    void initPlayer(Player player){
+    void initPlayer(Player player) {
         Node p = player.position;
         nodes[p.indexY][p.indexX].setOverlayState(CellState.PLAYER);
 
     }
-
 
     public boolean movePlayer(Player player, Player.Direction dir) {
         Node curr = player.position;
@@ -300,11 +281,15 @@ public class Grid extends JPanel {
         return true;
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        this.nodeSize = Math.min(getWidth(), getHeight()) / gridSize;
-        draw(g);
+    public Node[] getNodes() {
+        Node[] out = new Node[gridSize * gridSize];
+        int index = 0;
+        for (Node[] row : nodes) {
+            for (Node n : row) {
+                out[index] = n;
+                index++;
+            }
+        }
+        return out;
     }
-
 }
