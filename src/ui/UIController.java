@@ -10,7 +10,6 @@ import core.Grid;
 import utilities.Renderable;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,22 +17,21 @@ public class UIController extends JFrame {
 
     private List<Renderable> elements = new ArrayList<>();
 
-
-    public UIController(Grid grid, String title){
+    public UIController(Grid grid, String title) {
         super(title);
         GridRenderer gr = new GridRenderer(grid);
         elements.add(gr);
         setup();
     }
 
-    public UIController(Grid grid){
+    public UIController(Grid grid) {
         this(grid, "Maze Game");
     }
 
-    private void setup(){
+    private void setup() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setFocusable(true);
-        for (Renderable r : elements){
+        for (Renderable r : elements) {
             r.initUI();
             add(r.getComponent()); //weird little work around.
             System.out.println(r);
@@ -44,12 +42,12 @@ public class UIController extends JFrame {
         update();
     }
 
-    public void update(){
+    public void update() {
         update(Setup.ALL);
     }
 
-    public void update(int code){
-        for (Renderable r : elements){
+    public void update(int code) {
+        for (Renderable r : elements) {
             r.onUpdate();
         }
     }

@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 //TODO: ADD THEMES
@@ -42,32 +43,9 @@ public class Setup {
     //    player settings
     public static final Color PLAYER_COLOR = new Color(0xF5B2B2);
     public static final int PLAYER_SHRINK = 10;
-    public static final Map<Integer, Player.Direction> KEY_BINDINGS = Map.of(
-            KeyEvent.VK_W, Player.Direction.UP,
-            KeyEvent.VK_UP, Player.Direction.UP,
+    public static final Map<Integer, Player.Direction> KEY_BINDINGS = new HashMap<>();
 
-            KeyEvent.VK_A, Player.Direction.LEFT,
-            KeyEvent.VK_LEFT, Player.Direction.LEFT,
-
-            KeyEvent.VK_D, Player.Direction.RIGHT,
-            KeyEvent.VK_RIGHT, Player.Direction.RIGHT,
-
-            KeyEvent.VK_S, Player.Direction.DOWN,
-            KeyEvent.VK_DOWN, Player.Direction.DOWN
-    );
-
-    public static final Map<CellState, Color> COLORS = Map.of(
-            CellState.PLAYER, Setup.PLAYER_COLOR,
-            CellState.PATH, Setup.PATH_COLOR,
-            CellState.PATH_LOOKING, Setup.PATH_LOOKING_COLOR,
-            CellState.END, Setup.END_COLOR,
-            CellState.START, Setup.START_COLOR,
-            CellState.DEBUG, Setup.DEBUG_COLOR,
-            CellState.TARGET, Setup.TARGET_COLOR,
-            CellState.VISITED, Setup.VISITED_COLOR,
-            CellState.BACKGROUND, Setup.BACKGROUND_COLOR
-    );
-
+    public static final Map<CellState, Color> COLORS = new HashMap<>();
 
     public static final BufferedImage SMILE;
 
@@ -81,6 +59,29 @@ public class Setup {
     public static int sleepTimeBetweenPathRetrace = 0;
 
     static {
+
+        KEY_BINDINGS.put(KeyEvent.VK_W, Player.Direction.UP);
+        KEY_BINDINGS.put(KeyEvent.VK_UP, Player.Direction.UP);
+
+        KEY_BINDINGS.put(KeyEvent.VK_A, Player.Direction.LEFT);
+        KEY_BINDINGS.put(KeyEvent.VK_LEFT, Player.Direction.LEFT);
+
+        KEY_BINDINGS.put(KeyEvent.VK_D, Player.Direction.RIGHT);
+        KEY_BINDINGS.put(KeyEvent.VK_RIGHT, Player.Direction.RIGHT);
+
+        KEY_BINDINGS.put(KeyEvent.VK_S, Player.Direction.DOWN);
+        KEY_BINDINGS.put(KeyEvent.VK_DOWN, Player.Direction.DOWN);
+
+        COLORS.put(CellState.PLAYER, Setup.PLAYER_COLOR);
+        COLORS.put(CellState.PATH, Setup.PATH_COLOR);
+        COLORS.put(CellState.PATH_LOOKING, Setup.PATH_LOOKING_COLOR);
+        COLORS.put(CellState.END, Setup.END_COLOR);
+        COLORS.put(CellState.START, Setup.START_COLOR);
+        COLORS.put(CellState.DEBUG, Setup.DEBUG_COLOR);
+        COLORS.put(CellState.TARGET, Setup.TARGET_COLOR);
+        COLORS.put(CellState.VISITED, Setup.VISITED_COLOR);
+        COLORS.put(CellState.BACKGROUND, Setup.BACKGROUND_COLOR);
+
         BufferedImage img = null;
         try {
             File f = new File("../resources/smile.png");
