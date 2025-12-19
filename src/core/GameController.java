@@ -1,37 +1,51 @@
 package core;
-/*
- * Author: RohanSomani
- * Name: core.Game
- * Date: 2025-12-10
- */
 
 import config.Setup;
 import entities.Player;
 import ui.UIController;
+import utilities.UpdateListener;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+/**
+ * A game controller that implements {@link Grid} and {@link Player} to start and run the game.
+ * UI controlled by {@link UIController}
+ *
+ * @author RohanSomani
+ * @name core.Game
+ * @date 2025-12-10
+ */
 public class GameController implements UpdateListener {
 
-    private static UIController UI;
-    Grid grid;
+    private final UIController UI;
+    private final Grid grid;
 
-    boolean mazeFinished;
-    Player player;
+    private boolean mazeFinished;
+    private Player player;
 
+    /**
+     * initialize the controller
+     *
+     * @pre none. should always be called first.
+     * @post grid is initialized, ui is drawn
+     */
     public GameController() {
 
         grid = new Grid();
         grid.addListener(this);
         UI = new UIController(grid);
 
-        System.out.println(System.getProperty("java.version"));
-
-//        FIXME: not updating with path? ??
+//        FIXME: pathfinding not updating on space pressed
         setupInput();
     }
 
+    /**
+     * setup listening inputs to call a function.
+     *
+     * @pre ui exists, and is able to add a key adapter to it
+     * @post inputs now get rerouted to the method {@link GameController#handleKeyPress(KeyEvent)}
+     */
     private void setupInput() {
         UI.addKeyListener(new KeyAdapter() {
             @Override
@@ -41,7 +55,13 @@ public class GameController implements UpdateListener {
         });
     }
 
-    void start() {
+    /**
+     * start the maze generation in a new thread
+     *
+     * @pre grid exists in context, and can generate a maze
+     * @post calls the maze generation algorithm and then calls {@link GameController#onFinished()}
+     */
+    void startMazeGen() {
         Thread mazeThread = new Thread(() -> {
             handleMazeGen();
             onFinished();
@@ -49,6 +69,12 @@ public class GameController implements UpdateListener {
         mazeThread.start();
     }
 
+    /**
+     * Called when the maze generation is finished.
+     *
+     * @pre maze generation finished.
+     * @post initializes player, sets boolean {@link GameController#mazeFinished}, politely asks the ui to update.
+     */
     private void onFinished() {
         mazeFinished = true;
         player = new Player(grid.start);
@@ -56,6 +82,13 @@ public class GameController implements UpdateListener {
         UI.update(Setup.MAZE_FINISHED);
     }
 
+    /**
+     * Start the maze generation, handle any errors with animation
+     * if errors, defaults to no animation and prints to console.
+     *
+     * @pre grid, exists, and can be referenced.
+     * @post maze started generating.
+     */
     void handleMazeGen() {
         int result = grid.genMaze();
         if (result == Setup.INTERRUPTED_ERROR) {
@@ -67,9 +100,16 @@ public class GameController implements UpdateListener {
         }
     }
 
-    void handleKeyPress(KeyEvent e) {
+    /**
+     * handles the input. checks if the input is in list of player movements ({@link Setup#KEY_BINDINGS}) and if not
+     * it will check if the path should start generating.
+     * @param keyEvent the key event.
+     * @pre grid has a player, and can be called upon.
+     * @post player is moved, or path generation started, or nothing.
+     */
+    void handleKeyPress(KeyEvent keyEvent) {
         if (!mazeFinished) return;
-        int key = e.getKeyCode();
+        int key = keyEvent.getKeyCode();
 
         Player.Direction move = Setup.KEY_BINDINGS.get(key);
         if (move != null) {
@@ -86,6 +126,11 @@ public class GameController implements UpdateListener {
 
     }
 
+    /**
+     * @pre UI is ready to be updated.
+     * @post ui gets updated or queued to update with SwingUtilities.
+     * @param code the code to be updated from {@link Setup};
+     */
     @Override
     public void onUpdate(int code) {
         UI.update(code);

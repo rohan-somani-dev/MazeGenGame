@@ -1,9 +1,4 @@
 package core;
-/*
- * Author: RohanSomani
- * Name: core.Grid
- * Date: 2025-12-10
- */
 
 import config.Setup;
 import entities.Player;
@@ -15,20 +10,30 @@ import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Stack;
 
-//TODO: serialize, allow to save mazes to file to be opened later. https://www.baeldung.com/java-serialization
-//TODO: CLEAN THIS SHIT UP
+/**
+ * A grid, holding {@link Node Nodes}, implementing depth first search for maze generation and greedy best first search for pathfinding
+ *
+ * @author RohanSomani
+ * @name core.Grid
+ * @date 2025-12-10
+ */
 public class Grid implements Updater {
+    //TODO: serialize, allow to save mazes to file to be opened later. https://www.baeldung.com/java-serialization
+//TODO: outsource pathfinding and maybe maze generation?
+//TODO: CLEAN THIS STUFF UP
     public final int gridSize = Setup.GRID_SIZE;
-    public Node[][] nodes;
-    Random random;
+    public final Node[][] nodes;
+    final Random random;
 
-    Node start;
+    final Node start;
     Node end;
 
-    boolean testingInterruptedException;
 
     /**
      * Initialize grid.
+     *
+     * @pre gridSize defined, Node accessible.
+     * @post a 2d arr of {@link Node} objects "nodes" with the top left corner marked as the start
      */
     public Grid() {
 
@@ -47,12 +52,21 @@ public class Grid implements Updater {
 
     }
 
+    /**
+     * generate a maze based on depth first search <br>
+     * basically ripped pseudocode from <a href="https://en.wikipedia.org/wiki/Maze_generation_algorithm#Recursive_implementation">wikipedia</a>
+     *
+     * @return the error type from {@link Setup setup}
+     * @pre nodes[][] array populated
+     * @post nodes[][] array formatted with each node having walls where the maze said so
+     */
     public int genMaze() {
         Stack<Node> stack = new Stack<>();
         Node curr = start;
         curr.mazeVisited = true;
         stack.push(curr);
 
+//        recurse while there are still unvisited nodes.
         while (!stack.isEmpty()) {
             Node node = stack.peek();
             Node nextNode = getRandomNeighbour(node);
@@ -65,6 +79,7 @@ public class Grid implements Updater {
                 notifyListeners();
 
 //                remove walls
+//                TODO: cleanup? extract method maybe. or implement in node class.
                 int deltaX = nextNode.indexX - node.indexX;
                 int deltaY = nextNode.indexY - node.indexY;
 
@@ -88,7 +103,6 @@ public class Grid implements Updater {
 
                 if (Setup.mazeSleepTime > 0) {
                     try {
-                        if (testingInterruptedException) throw new InterruptedException("TESTING ERROR");
                         Thread.sleep(Setup.mazeSleepTime);
                     } catch (InterruptedException e) {
                         Setup.handleError(e);
@@ -108,6 +122,13 @@ public class Grid implements Updater {
         return Setup.FUNCTION_SUCCESS;
     }
 
+    /**
+     * The call for when mazeGen is finished: <br>
+     * chooses an end point based on furthest distance from start with at least three walls surrounding (ie it's a dead end)
+     *
+     * @pre nodes[][] walls set; maze is generated.
+     * @post nodes are reset to their base state; end choice is set, repaint requested
+     */
     void mazeGenFinished() {
         for (int y = 0; y < gridSize; y++) {
             for (int x = 0; x < gridSize; x++) {
@@ -126,11 +147,17 @@ public class Grid implements Updater {
             }
         }
         setEnd(topChoice);
-        notifyListeners();
+        notifyListeners(); //request repaint
     }
 
+    /**
+     * @param _end the node to be set as end
+     * @pre nodes[][] initialized. this can really be called anytime <br>
+     *         further down development, if wanted to set end as always top right, deprecate {@link Grid#getDeadEnds()} and hardcode the call here.
+     * @post given node set as end, all nodes point to end as their goal.
+     */
     void setEnd(Node _end) {
-        end = _end;
+        this.end = _end;
         end.setBaseState(CellState.END);
 
         for (Node[] row : nodes) {
@@ -140,6 +167,13 @@ public class Grid implements Updater {
         }
     }
 
+    /**
+     * Loop through the maze and get all the nodes with three walls
+     *
+     * @return a list of all the dead ends in the current maze.
+     * @pre maze is finished, walls are set.
+     * @post the return is not null, populated with all nodes in the grid with three walls, which is always guaranteed due to the nature of dfs
+     */
     ArrayList<Node> getDeadEnds() {
         ArrayList<Node> out = new ArrayList<>();
         for (Node[] row : nodes) {
@@ -152,11 +186,29 @@ public class Grid implements Updater {
         return out;
     }
 
+    /**
+     * return the node at the indices given, else null
+     *
+     * @param i the x index of needed node
+     * @param j the y index of needed node
+     * @return the node at x, y if exists, else null.
+     * @pre nodes[][] is populated
+     * @post a Node at position nodes[j][i], or null if outside bounds.
+     */
     public Node getNodeOrNull(int i, int j) {
         if (i < 0 || j < 0 || i >= gridSize || j >= gridSize) return null;
         return nodes[j][i];
     }
 
+    /**
+     * get a random unvisited neighbour out of the four cardinal neighbours of Node n, taking into account boundaries and such.
+     *
+     * @param n the node to find the neighbours of
+     * @return the (randomly) chosen neighbour. <br>
+     *         //TODO: add a seed value? that the user can input?
+     * @pre populated nodes[][]
+     * @post returns a random unvisited neighbour of n, or null if there is no such neighbour.
+     */
     Node getRandomNeighbour(Node n) {
         ArrayList<Node> neighbours = getNeighbours(n);
         ArrayList<Node> validated = new ArrayList<>();
@@ -171,6 +223,14 @@ public class Grid implements Updater {
         return null;
     }
 
+    /**
+     * Obtain a list of neighbours of node n.
+     *
+     * @param n the node to get the neighbours of
+     * @return a list containing neighbours of node n.
+     * @pre populated nodes[][]
+     * @post A nonnull list of neighbours, only empty if n is null.
+     */
     ArrayList<Node> getNeighbours(Node n) {
         int x = n.indexX;
         int y = n.indexY;
@@ -179,14 +239,21 @@ public class Grid implements Updater {
         for (int[] offset : offsets) {
             int currX = x + offset[0];
             int currY = y + offset[1];
-            if (currX >= 0 && currX < gridSize && currY >= 0 && currY < gridSize) {
-                neighbours.add(nodes[currY][currX]);
+            Node neighbour = getNodeOrNull(currX, currY);
+            if (neighbour != null) {
+                neighbours.add(neighbour);
             }
         }
 
         return neighbours;
     }
 
+    /**
+     * Pathfind using GreedyBFS; notify when finished.
+     *
+     * @pre established maze; must be path from start to end.
+     * @post every node on the shortest path gets a parent assigned to them, pointing to the previous node in the path
+     */
     public void GreedyBFS() {
         start.pathVisited = true;
         PriorityQueue<Node> queue = new PriorityQueue<>(
@@ -200,12 +267,15 @@ public class Grid implements Updater {
             if (neighbours == null) continue;
             for (Node neighbour : neighbours) {
                 if (!neighbour.pathVisited && Node.canWalk(curr, neighbour)) {
+                    //set the parent to the current node, so that no matter whether it's on the path the parent can be found
                     neighbour.parent = curr;
+
                     neighbour.pathVisited = true;
                     queue.add(neighbour);
                     if (neighbour.getState() == CellState.END) {
+                        //the first time we find the end it's guaranteed to be the shortest path since we always move towards it
                         try {
-                            Thread.sleep(Setup.sleepTimeBetweenPathRetrace);
+                            Thread.sleep(Setup.sleepTimeBetweenPathRetrace); //sleep before retrace so that there's a pause.
                         } catch (InterruptedException e) {
                             Setup.handleError(e);
                         }
@@ -225,11 +295,13 @@ public class Grid implements Updater {
 
     }
 
+    /**
+     * To be called when the path is found.
+     *
+     * @pre nodes have parents assigned to them based on the path
+     * @post nodes gain property {@link Node#onPath} if on the path.
+     */
     void pathFound() {
-        retrace();
-    }
-
-    void retrace() {
         Node pathNode = end;
         while (pathNode != null) {
             pathNode.onPath = true;
@@ -243,15 +315,33 @@ public class Grid implements Updater {
                 System.out.println("ERROR");
                 Setup.handleError(e);
             }
+            notifyListeners();
         }
     }
 
+    /**
+     * initialize the player.
+     *
+     * @param player player to be used for movement.
+     * @pre maze must be finished <br>
+     *         path from start to end is recommended unless you want to be mean.
+     * @post player initialized, node at player position set to player.
+     */
     void initPlayer(Player player) {
         Node p = player.position;
         nodes[p.indexY][p.indexX].setOverlayState(CellState.PLAYER);
 
     }
 
+    /**
+     * move the player in a certain direction, checks validity.
+     *
+     * @param player the player to be moved, can be changed to entity later on in development.
+     * @param dir    the direction to move the player in. doesn't have to be valid.
+     * @return true if move was successful, false if not.
+     * @pre player exists, and is on grid.
+     * @post player moves in desired direction if possible.
+     */
     public boolean movePlayer(Player player, Player.Direction dir) {
         Node curr = player.position;
 
@@ -282,6 +372,13 @@ public class Grid implements Updater {
         return true;
     }
 
+    /**
+     * return the array of nodes flattened to be a 1d array.
+     *
+     * @return 1d array of all nodes in nodes.
+     * @pre populated nodes[][]
+     * @post a nonnull node array is returned.
+     */
     public Node[] getNodes() {
         Node[] out = new Node[gridSize * gridSize];
         int index = 0;
@@ -292,5 +389,6 @@ public class Grid implements Updater {
             }
         }
         return out;
+
     }
 }

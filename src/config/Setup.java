@@ -1,9 +1,4 @@
 package config;
-/*
- * Author: RohanSomani
- * Name: Config
- * Date: 2025-12-10
- */
 
 import entities.Player;
 import utilities.CellState;
@@ -17,10 +12,17 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-//TODO: ADD THEMES
+/** Constants, setup fields, and maps.
+ * @author RohanSomani
+ * @name Config
+ * @date 2025-12-10
+ * TODO: add themes
+ */
+@SuppressWarnings("unused")
 public class Setup {
 
     //    LISTENER CODES
+//    TODO: ADD CODES TO A MAP!
     public static final int MAZE_FINISHED = 0b0100;
     public static final int PATH_FINISHED = 0b1000;
     public static final int ALL = 0b1111;
@@ -49,14 +51,15 @@ public class Setup {
 
     public static final BufferedImage SMILE;
 
-    // constants
     public static final int UP = 0b0001;
     public static final int RIGHT = 0b0010;
     public static final int DOWN = 0b0100;
     public static final int LEFT = 0b1000;
-    public static int mazeSleepTime = 0;
-    public static int pathSleepTime = 0;
-    public static int sleepTimeBetweenPathRetrace = 0;
+
+
+    public static int mazeSleepTime = 20;
+    public static final int pathSleepTime = 20;
+    public static final int sleepTimeBetweenPathRetrace = 200;
 
     static {
 
@@ -95,7 +98,14 @@ public class Setup {
     private Setup() {
     }
 
+    /**
+     * handle error
+     * @pre None
+     * @post log the exception.
+     * @param e the exception to be handled
+     */
     public static void handleError(Exception e) {
-        e.printStackTrace();
+        //TODO add logging
+         e.printStackTrace();
     }
 }

@@ -1,9 +1,4 @@
 package ui;
-/*
- * Author: RohanSomani
- * Name: NodeRenderer
- * Date: 2025-12-16
- */
 
 import config.Setup;
 import core.Node;
@@ -13,8 +8,23 @@ import java.awt.*;
 
 import static config.Setup.COLORS;
 
+/** a class to draw nodes
+ * @author RohanSomani
+ * @name NodeRenderer
+ * @date 2025-12-16
+ */
 public class NodeDrawer {
 
+    /**
+     * draw the node.
+     * @pre JPanel must be able to be drawn on, position must be on screen.
+     * @post Node is drawn based on given nodes state.
+     * @param g the graphics object to be drawn on.
+     * @param n the node to be used to get state, position and such.
+     * @param size the size of the node to be drawn.
+     * @param isLastRow self-explanatory.
+     * @param isLastCol see above.
+     */
     public static void draw(Graphics g, Node n, int size, boolean isLastRow, boolean isLastCol) {
         CellState state = n.getState();
         g.setColor(COLORS.get(state));
@@ -37,17 +47,17 @@ public class NodeDrawer {
     }
 
     private static void drawPlayer(Node n, int x, int y, int size, Graphics g) {
-//        onUpdate background
+//        update background
         g.setColor(COLORS.get(n.getBaseState()));
         g.fillRect(x, y, size, size);
 
         int newSize = size - Setup.PLAYER_SHRINK * 2;
 
-//        onUpdate player
+//        update player
         g.setColor(COLORS.get(CellState.PLAYER));
         g.fillRect(x + Setup.PLAYER_SHRINK, y + Setup.PLAYER_SHRINK, newSize, newSize);
 
-//        onUpdate little face :)
+//        update little face :)
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setComposite(AlphaComposite.SrcOver); //allow transparency
 
