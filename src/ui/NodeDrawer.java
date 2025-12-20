@@ -1,6 +1,7 @@
 package ui;
 
 import config.Setup;
+import config.themes.ThemeColor;
 import core.Node;
 import utilities.CellState;
 
@@ -8,7 +9,9 @@ import java.awt.*;
 
 import static config.Setup.COLORS;
 
-/** a class to draw nodes
+/**
+ * a class to draw nodes
+ *
  * @author RohanSomani
  * @name NodeRenderer
  * @date 2025-12-16
@@ -17,13 +20,14 @@ public class NodeDrawer {
 
     /**
      * draw the node.
-     * @pre JPanel must be able to be drawn on, position must be on screen.
-     * @post Node is drawn based on given nodes state.
-     * @param g the graphics object to be drawn on.
-     * @param n the node to be used to get state, position and such.
-     * @param size the size of the node to be drawn.
+     *
+     * @param g         the graphics object to be drawn on.
+     * @param n         the node to be used to get state, position and such.
+     * @param size      the size of the node to be drawn.
      * @param isLastRow self-explanatory.
      * @param isLastCol see above.
+     * @pre JPanel must be able to be drawn on, position must be on screen.
+     * @post Node is drawn based on given nodes state.
      */
     public static void draw(Graphics g, Node n, int size, boolean isLastRow, boolean isLastCol) {
         CellState state = n.getState();
@@ -38,7 +42,7 @@ public class NodeDrawer {
             g.fillRect(x, y, size, size);
         }
 
-        g.setColor(Setup.WALL_COLOR);
+        g.setColor(Setup.getColor(ThemeColor.WALL));
         if (n.checkWall(Setup.UP) || n.indexY == 0) g.drawLine(x, y, x + size, y);
         if (n.checkWall(Setup.LEFT) || n.indexX == 0) g.drawLine(x, y, x, y + size);
         if (n.checkWall(Setup.DOWN) || isLastCol) g.drawLine(x, y + size - 1, x + size - 1, y + size - 1);

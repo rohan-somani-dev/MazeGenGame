@@ -1,6 +1,7 @@
 package ui;
 
 import config.Setup;
+import config.themes.ThemeColor;
 import core.Grid;
 import core.Node;
 import utilities.Renderable;
@@ -27,7 +28,7 @@ public class GridRenderer extends JPanel implements Renderable {
      */
     public GridRenderer(Grid grid) {
         this.grid = grid;
-        setBackground(Setup.BACKGROUND_COLOR);
+        setBackground(Setup.getColor(ThemeColor.BACKGROUND));
         setFocusable(false);
         setPreferredSize(new Dimension(Setup.WINDOW_SIZE, Setup.WINDOW_SIZE));
         setOpaque(true);

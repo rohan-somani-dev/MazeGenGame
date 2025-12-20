@@ -6,7 +6,6 @@ package utilities;
 public enum CellState {
     PLAYER,
     PATH,
-    PATH_LOOKING,
     END,
     START,
     DEBUG,
