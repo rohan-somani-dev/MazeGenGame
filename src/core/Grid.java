@@ -125,11 +125,7 @@ public class Grid implements Updater {
      * @post nodes are reset to their base state; end choice is set, repaint requested
      */
     void mazeGenFinished() {
-        for (int y = 0; y < gridSize; y++) {
-            for (int x = 0; x < gridSize; x++) {
-                nodes[y][x].clearOverlay();
-            }
-        }
+        clearAllOverlays();
 
         Node topChoice = start;
         int maxDistance = 0;
@@ -143,6 +139,14 @@ public class Grid implements Updater {
         }
         setEnd(topChoice);
         notifyListeners(); //request repaint
+    }
+
+    private void clearAllOverlays() {
+        for (int y = 0; y < gridSize; y++) {
+            for (int x = 0; x < gridSize; x++) {
+                nodes[y][x].clearOverlay();
+            }
+        }
     }
 
     /**
@@ -254,6 +258,7 @@ public class Grid implements Updater {
                 (a, b) -> Integer.compare(a.getManhattanDistance(end), b.getManhattanDistance(end))
         );
         queue.add(start);
+        int i = 0;
 
         while (!queue.isEmpty()) {
             Node curr = queue.poll();
@@ -266,26 +271,26 @@ public class Grid implements Updater {
 
                     neighbour.pathVisited = true;
                     queue.add(neighbour);
-                    if (neighbour.getState() == CellState.END) {
+                    neighbour.setOverlayState(CellState.TARGET);
+                    if (neighbour.getBaseState() == CellState.END) {
                         //the first time we find the end it's guaranteed to be the shortest path since we always move towards it
-                        try {
-                            Thread.sleep(Setup.sleepTimeBetweenPathRetrace); //sleep before retrace so that there's a pause.
-                        } catch (InterruptedException e) {
-                            Setup.handleError(e);
-                        }
+
                         pathFound();
                         return;
                     }
                 }
+
             }
-            notifyListeners();
+            if (i++ % Setup.STEPS_PER_REDRAW != 0) continue;
             try {
                 Thread.sleep(Setup.pathSleepTime);
             } catch (InterruptedException e) {
                 Setup.handleError(e);
             }
-
+            notifyListeners();
         }
+
+        System.out.println("FINISHED INTERNALLY");
 
     }
 
@@ -296,6 +301,13 @@ public class Grid implements Updater {
      * @post nodes gain property {@link Node#onPath} if on the path.
      */
     void pathFound() {
+        try {
+            Thread.sleep(Setup.sleepTimeBetweenPathRetrace); //sleep before retrace so that there's a pause.
+        } catch (InterruptedException e) {
+            Setup.handleError(e);
+        }
+
+        clearAllOverlays();
         Node pathNode = end;
         while (pathNode != null) {
             pathNode.onPath = true;

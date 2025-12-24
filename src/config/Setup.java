@@ -31,7 +31,7 @@ public class Setup {
     public static final int PATH_FINISHED = 0b1000;
     public static final int ALL = 0b1111;
 
-    public static final Theme theme = ThemeHolder.LIGHT;
+    public static final Theme theme = ThemeHolder.DARK;
 
     //    player settings
     public static final int PLAYER_SHRINK = 10;
@@ -45,16 +45,17 @@ public class Setup {
     public static final int RIGHT = 0b0010;
     public static final int DOWN = 0b0100;
     public static final int LEFT = 0b1000;
-    public static final int GRID_SIZE = 10;
-    public static final int WINDOW_SIZE = 1000;
+    public static final int GRID_SIZE = 100;
+    public static final int WINDOW_SIZE = 1300;
     public static final int FUNCTION_SUCCESS = 0;
     public static final int INTERRUPTED_ERROR = 1;
 
-    public static int mazeSleepTime = 10;
+    public static int mazeSleepTime = 0;
     @SuppressWarnings("CanBeFinal") //temp
-    public static int pathSleepTime = 10;
+    public static int pathSleepTime = 3;
+    public static final int STEPS_PER_REDRAW = 1;
     @SuppressWarnings("CanBeFinal") //temp
-    public static int sleepTimeBetweenPathRetrace = 10;
+    public static int sleepTimeBetweenPathRetrace = 1000;
 
     static {
 

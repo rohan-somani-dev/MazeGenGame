@@ -46,8 +46,7 @@ public class UIController extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setFocusable(true);
         for (Renderable r : elements) {
-            add(r.getComponent()); //weird little work around.
-            System.out.println(r);
+            this.add(r.getComponent());
         }
         pack();
         setLocationRelativeTo(null);

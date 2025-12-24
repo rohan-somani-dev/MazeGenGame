@@ -36,7 +36,6 @@ public class GameController implements UpdateListener {
         grid.addListener(this);
         UI = new UIController(grid);
 
-//        FIXME: pathfinding not updating on space pressed
         setupInput();
     }
 
@@ -111,17 +110,20 @@ public class GameController implements UpdateListener {
         if (!mazeFinished) return;
         int key = keyEvent.getKeyCode();
 
-        Player.Direction move = Setup.KEY_BINDINGS.get(key);
+        Player.Direction move = Setup.KEY_BINDINGS.getOrDefault(key, null);
         if (move != null) {
             if (grid.movePlayer(player, move)) {
                 UI.update();
             }
-            return;
         }
 
         if (key == KeyEvent.VK_SPACE) {
 //            TODO: set start to player pos, make the path generate from there; allow player to regen path as much as they want
-            new Thread(grid::GreedyBFS).start();
+            System.out.println("SEARCHING");
+            new Thread(() -> {
+                grid.GreedyBFS();
+                System.out.println("FINISHED");
+            }).start();
         }
 
     }
