@@ -7,6 +7,7 @@ import utilities.UpdateListener;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 /**
  * A game controller that implements {@link Grid} and {@link Player} to start and run the game.
@@ -95,7 +96,7 @@ public class GameController implements UpdateListener {
             Setup.mazeSleepTime = 0;
             handleMazeGen();
         } else if (result != 0) {
-            System.out.println("error in maze gen");
+            Setup.handleError(new InterruptedException("Maze Gen error"));
         }
     }
 
@@ -119,11 +120,7 @@ public class GameController implements UpdateListener {
 
         if (key == KeyEvent.VK_SPACE) {
 //            TODO: set start to player pos, make the path generate from there; allow player to regen path as much as they want
-            System.out.println("SEARCHING");
-            new Thread(() -> {
-                grid.GreedyBFS();
-                System.out.println("FINISHED");
-            }).start();
+            new Thread(grid::GreedyBFS).start();
         }
 
     }

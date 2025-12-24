@@ -290,7 +290,6 @@ public class Grid implements Updater {
             notifyListeners();
         }
 
-        System.out.println("FINISHED INTERNALLY");
 
     }
 
@@ -318,7 +317,6 @@ public class Grid implements Updater {
             try {
                 Thread.sleep(Setup.pathSleepTime);
             } catch (InterruptedException e) {
-                System.out.println("ERROR");
                 Setup.handleError(e);
             }
             notifyListeners();
