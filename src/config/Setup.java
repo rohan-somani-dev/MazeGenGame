@@ -1,10 +1,9 @@
 package config;
 
 import config.themes.Theme;
-import config.themes.ThemeColor;
+import config.themes.VisualType;
 import config.themes.ThemeHolder;
 import entities.Player;
-import utilities.CellState;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -32,14 +31,12 @@ public class Setup {
     public static final int PATH_FINISHED = 0b1000;
     public static final int ALL = 0b1111;
 
-    //TODO: make the switch from background to visited back to background make sense.
-    public static final Theme theme = ThemeHolder.PASTEL;
+    public static final Theme theme = ThemeHolder.LIGHT;
 
     //    player settings
     public static final int PLAYER_SHRINK = 10;
     public static final Map<Integer, Player.Direction> KEY_BINDINGS = new HashMap<>();
 
-    public static final Map<CellState, Color> COLORS = new HashMap<>();
 
     public static final BufferedImage SMILE;
 
@@ -73,16 +70,6 @@ public class Setup {
         KEY_BINDINGS.put(KeyEvent.VK_S, Player.Direction.DOWN);
         KEY_BINDINGS.put(KeyEvent.VK_DOWN, Player.Direction.DOWN);
 
-        //TODO: this map seems overkill. maybe can do away with it?
-        COLORS.put(CellState.PLAYER, getColor(ThemeColor.PLAYER));
-        COLORS.put(CellState.PATH, getColor(ThemeColor.PATH));
-        COLORS.put(CellState.END, getColor(ThemeColor.END));
-        COLORS.put(CellState.START, getColor(ThemeColor.START));
-        COLORS.put(CellState.TARGET, getColor(ThemeColor.TARGET));
-        COLORS.put(CellState.VISITED, getColor(ThemeColor.VISITED));
-        COLORS.put(CellState.BACKGROUND, getColor(ThemeColor.BACKGROUND));
-        COLORS.put(CellState.DEBUG, getColor(ThemeColor.DEBUG));
-
         BufferedImage img = null;
         try {
             File f = new File("../resources/smile.png");
@@ -115,7 +102,7 @@ public class Setup {
      * @param c the type of element to get the color of.
      * @return the obtained color from the current theme.
      */
-    public static Color getColor(ThemeColor c) {
+    public static Color getColor(VisualType c) {
         return theme.get(c);
     }
 }

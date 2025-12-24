@@ -3,7 +3,7 @@ package config.themes;
 /**
  * A helper class that dictates the type of variables needed for a theme.
  */
-public enum ThemeColor {
+public enum VisualType {
     WALL,
     TARGET,
     BACKGROUND,
@@ -11,7 +11,6 @@ public enum ThemeColor {
     START,
     END,
     PATH,
-    PATH_LOOKING,
     PLAYER,
     DEBUG
 }

@@ -9,7 +9,7 @@ package core;
 public class Main {
 
     /** the main class to run the game;
-     * @param unused not used; TODO: add optional file to read from.
+     * @param unused not used;
      * @pre program exists
      * @post {@link GameController} is started
      */

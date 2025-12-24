@@ -20,14 +20,12 @@ import java.util.Stack;
 public class Grid implements Updater {
     //TODO: serialize, allow to save mazes to file to be opened later. https://www.baeldung.com/java-serialization
 //TODO: outsource pathfinding and maybe maze generation?
-//TODO: CLEAN THIS STUFF UP
     public final int gridSize = Setup.GRID_SIZE;
     public final Node[][] nodes;
     final Random random;
 
     final Node start;
     Node end;
-
 
     /**
      * Initialize grid.
@@ -79,24 +77,21 @@ public class Grid implements Updater {
                 notifyListeners();
 
 //                remove walls
-//                TODO: cleanup? extract method maybe. or implement in node class.
                 int deltaX = nextNode.indexX - node.indexX;
                 int deltaY = nextNode.indexY - node.indexY;
 
                 if (deltaX == 1) {
-                    node.walls &= ~Setup.RIGHT;
-                    nextNode.walls &= ~Setup.LEFT;
+                    node.removeWall(Setup.RIGHT);
+                    nextNode.removeWall(Setup.LEFT);
                 } else if (deltaX == -1) {
-                    node.walls &= ~Setup.LEFT;
-                    nextNode.walls &= ~Setup.RIGHT;
-                }
-
-                if (deltaY == 1) {
-                    node.walls &= ~Setup.DOWN;
-                    nextNode.walls &= ~Setup.UP;
+                    node.removeWall(Setup.LEFT);
+                    nextNode.removeWall(Setup.RIGHT);
+                } else if (deltaY == 1) {
+                    node.removeWall(Setup.DOWN);
+                    nextNode.removeWall(Setup.UP);
                 } else if (deltaY == -1) {
-                    node.walls &= ~Setup.UP;
-                    nextNode.walls &= ~Setup.DOWN;
+                    node.removeWall(Setup.UP);
+                    nextNode.removeWall(Setup.DOWN);
                 }
 
                 stack.push(nextNode);
@@ -205,7 +200,6 @@ public class Grid implements Updater {
      *
      * @param n the node to find the neighbours of
      * @return the (randomly) chosen neighbour. <br>
-     *         //TODO: add a seed value? that the user can input?
      * @pre populated nodes[][]
      * @post returns a random unvisited neighbour of n, or null if there is no such neighbour.
      */

@@ -104,7 +104,7 @@ public class Node implements Comparable<Node> {
      * @pre nodes indices are defined, other nodes indices are defined.
      * @post the manhattan distance between the two nodes are returned, always positive, possibly 0.
      * @param other the node to be compared against.
-     * @return the number of horizontal steps it takes to get from <code>this</code> to <code>other</code>.
+     * @return the number of orthogonal steps it takes to get from {@code this} to {@code other}.
      */
     public int getManhattanDistance(Node other) {
         return Math.abs(other.indexX - indexX) + Math.abs(other.indexY - indexY);
@@ -128,10 +128,20 @@ public class Node implements Comparable<Node> {
 
     /**
      * Set the overlay state to null, allowing the base state to shine through. <br>
-     * Equivalent to <code>this.setOverlayState(null)</code>
+     * Equivalent to {@code this.setOverlayState(null)}
      */
     public void clearOverlay() {
         this.setOverlayState(null);
+    }
+
+    /**
+     * remove direction in direction
+     * @pre walls initialized, doesn't have to be a wall in specified direction.
+     * @post wall in the direction given is removed.
+     * @param direction the direction from {@link Setup} ie {@code Setup.UP}
+     */
+    public void removeWall(int direction){
+        this.walls &= ~direction;
     }
 
 }

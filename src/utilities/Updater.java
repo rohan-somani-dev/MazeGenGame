@@ -26,7 +26,7 @@ public interface Updater {
 
     /** Notify every added listener that there has been an update.
      * @pre None.
-     * @post every listener's <code>.onUpdate()</code> has been called.
+     * @post every listener's {@code .onUpdate()} has been called.
      */
     default void notifyListeners() {
         for (UpdateListener listener : listeners) {

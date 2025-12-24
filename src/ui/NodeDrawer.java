@@ -1,13 +1,11 @@
 package ui;
 
 import config.Setup;
-import config.themes.ThemeColor;
+import config.themes.VisualType;
 import core.Node;
 import utilities.CellState;
 
 import java.awt.*;
-
-import static config.Setup.COLORS;
 
 /**
  * a class to draw nodes
@@ -31,7 +29,8 @@ public class NodeDrawer {
      */
     public static void draw(Graphics g, Node n, int size, boolean isLastRow, boolean isLastCol) {
         CellState state = n.getState();
-        g.setColor(COLORS.get(state));
+        Color stateColor = Setup.getColor(state.getVisualType());
+        g.setColor(stateColor);
 
         int x = n.indexX * size;
         int y = n.indexY * size;
@@ -42,7 +41,7 @@ public class NodeDrawer {
             g.fillRect(x, y, size, size);
         }
 
-        g.setColor(Setup.getColor(ThemeColor.WALL));
+        g.setColor(Setup.getColor(VisualType.WALL));
         if (n.checkWall(Setup.UP) || n.indexY == 0) g.drawLine(x, y, x + size, y);
         if (n.checkWall(Setup.LEFT) || n.indexX == 0) g.drawLine(x, y, x, y + size);
         if (n.checkWall(Setup.DOWN) || isLastCol) g.drawLine(x, y + size - 1, x + size - 1, y + size - 1);
@@ -52,13 +51,15 @@ public class NodeDrawer {
 
     private static void drawPlayer(Node n, int x, int y, int size, Graphics g) {
 //        update background
-        g.setColor(COLORS.get(n.getBaseState()));
+        CellState baseState = n.getBaseState();
+        Color baseColor = Setup.getColor(baseState.getVisualType());
+        g.setColor(baseColor);
         g.fillRect(x, y, size, size);
 
         int newSize = size - Setup.PLAYER_SHRINK * 2;
 
 //        update player
-        g.setColor(COLORS.get(CellState.PLAYER));
+        g.setColor(Setup.getColor(VisualType.PLAYER));
         g.fillRect(x + Setup.PLAYER_SHRINK, y + Setup.PLAYER_SHRINK, newSize, newSize);
 
 //        update little face :)
