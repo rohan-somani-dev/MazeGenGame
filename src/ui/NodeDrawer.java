@@ -41,12 +41,16 @@ public class NodeDrawer {
             g.fillRect(x, y, size, size);
         }
 
+        drawWalls(g, n, size, isLastRow, isLastCol, x, y);
+
+    }
+
+    private static void drawWalls(Graphics g, Node n, int size, boolean isLastRow, boolean isLastCol, int x, int y) {
         g.setColor(Setup.getColor(VisualType.WALL));
         if (n.checkWall(Setup.UP) || n.indexY == 0) g.drawLine(x, y, x + size, y);
         if (n.checkWall(Setup.LEFT) || n.indexX == 0) g.drawLine(x, y, x, y + size);
         if (n.checkWall(Setup.DOWN) || isLastCol) g.drawLine(x, y + size - 1, x + size - 1, y + size - 1);
         if (n.checkWall(Setup.RIGHT) || isLastRow) g.drawLine(x + size - 1, y, x + size - 1, y + size - 1);
-
     }
 
     private static void drawPlayer(Node n, int x, int y, int size, Graphics g) {
