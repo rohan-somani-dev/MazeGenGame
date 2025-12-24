@@ -14,12 +14,23 @@ public class Theme {
 
     private final EnumMap<ThemeColor, Color> colors; // thanks! https://www.baeldung.com/java-enum-map
 
+    /**
+     * Initialize theme with given colors.
+     * @param colors the color map to be used, recommended to be from using <code>this.getMap()</code>
+     */
     public Theme(EnumMap<ThemeColor, Color> colors){
         this.colors = colors;
     }
 
-    public Color get(ThemeColor color){
-        return colors.get(color);
+    /**
+     * get the color of a given element type.
+     * @pre this.colors is initialized.
+     * @post color is returned, defaulting to pure white.
+     * @param themeColor the type of element to get the color of.
+     * @return a nonnull color from themes.
+     */
+    public Color get(ThemeColor themeColor){
+        return colors.getOrDefault(themeColor, new Color(0xffffff));
     }
 
     /**

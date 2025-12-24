@@ -7,10 +7,11 @@ import java.awt.*;
  * @name ThemeHolder
  * @date 2025-12-20
  */
+@SuppressWarnings("unused")
 public class ThemeHolder {
 
-    public static Theme DARK;
-    public static Theme LIGHT;
+    public static final Theme DARK;
+    public static final Theme LIGHT;
 
     static { //this runs once when ThemeHolder is first loaded (currently in Setup.theme's initialization).
         Object[] darkTheme = new Object[]{
@@ -51,7 +52,7 @@ public class ThemeHolder {
                     new Object[]{
                             ThemeColor.WALL, new Color(0xF7F7F7),
                             ThemeColor.TARGET, new Color(0xF2A7C6),
-                            ThemeColor.BACKGROUND, new Color(0xF4EEF6).darker(),
+                            ThemeColor.BACKGROUND, new Color(0xD6E4F0),
                             ThemeColor.VISITED, new Color(0xD6E4F0),
                             ThemeColor.START, new Color(0xB8C0FF),
                             ThemeColor.END, new Color(0xDDBDD5),

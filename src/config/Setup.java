@@ -33,7 +33,7 @@ public class Setup {
     public static final int ALL = 0b1111;
 
     //TODO: make the switch from background to visited back to background make sense.
-    public static final Theme theme = ThemeHolder.LIGHT;
+    public static final Theme theme = ThemeHolder.PASTEL;
 
     //    player settings
     public static final int PLAYER_SHRINK = 10;
@@ -54,7 +54,9 @@ public class Setup {
     public static final int INTERRUPTED_ERROR = 1;
 
     public static int mazeSleepTime = 10;
+    @SuppressWarnings("CanBeFinal") //temp
     public static int pathSleepTime = 10;
+    @SuppressWarnings("CanBeFinal") //temp
     public static int sleepTimeBetweenPathRetrace = 10;
 
     static {
@@ -106,6 +108,13 @@ public class Setup {
         e.printStackTrace();
     }
 
+    /**
+     * Get the color of a type of element
+     * @pre theme is initialized, AND HAS ALL VALUES SET
+     * @post a nonnull color is returned, defaulting to pure white.
+     * @param c the type of element to get the color of.
+     * @return the obtained color from the current theme.
+     */
     public static Color getColor(ThemeColor c) {
         return theme.get(c);
     }
