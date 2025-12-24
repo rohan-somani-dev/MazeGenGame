@@ -21,7 +21,7 @@ import java.util.Map;
  * @author RohanSomani
  * @name Config
  * @date 2025-12-10
- *                         TODO: add themes
+ *
  */
 @SuppressWarnings("unused")
 public class Setup {
