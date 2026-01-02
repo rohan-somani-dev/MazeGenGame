@@ -34,7 +34,7 @@ public class Setup {
     public static final Theme theme = ThemeHolder.DARK;
 
     //    player settings
-    public static final int PLAYER_SHRINK = 10;
+    public static final int PLAYER_SHRINK = 5;
     public static final Map<Integer, Player.Direction> KEY_BINDINGS = new HashMap<>();
 
 

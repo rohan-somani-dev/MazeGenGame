@@ -1,5 +1,8 @@
 #ignore all files in .idea/
 .idea/
 
+*.iml
+*.xml
+
 .out/
 .saves/
