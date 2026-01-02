@@ -281,6 +281,7 @@ public class Grid implements Updater {
                 }
 
             }
+            //noinspection ConstantValue
             if (i++ % Setup.STEPS_PER_REDRAW != 0) continue;
             try {
                 Thread.sleep(Setup.pathSleepTime);

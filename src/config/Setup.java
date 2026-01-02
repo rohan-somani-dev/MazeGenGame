@@ -45,7 +45,7 @@ public class Setup {
     public static final int RIGHT = 0b0010;
     public static final int DOWN = 0b0100;
     public static final int LEFT = 0b1000;
-    public static final int GRID_SIZE = 100;
+    public static final int GRID_SIZE = 20;
     public static final int WINDOW_SIZE = 1300;
     public static final int FUNCTION_SUCCESS = 0;
     public static final int INTERRUPTED_ERROR = 1;
@@ -73,7 +73,7 @@ public class Setup {
 
         BufferedImage img = null;
         try {
-            File f = new File("../resources/smile.png");
+            File f = new File("resources/smile.png");
             img = ImageIO.read(f);
         } catch (IOException e) {
             Setup.handleError(e);
