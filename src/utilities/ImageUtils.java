@@ -1,8 +1,16 @@
 package utilities;
 
+import config.Setup;
+import ui.themes.VisualType;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  * @author RohanSomani
@@ -48,6 +56,67 @@ public class ImageUtils {
         g2.dispose();
 
         return new ImageIcon(recolored);
+    }
+
+    /**
+     * a helper method to help create themes from the console.
+     *
+     * @param input    scanner to be used.
+     * @param fileName the filename inside resources/themes/ to be used. omitting png
+     */
+    @SuppressWarnings("unused")
+    public static void writeTheme(Scanner input, String fileName) {
+        String pathToWriteTo = "resources/themes/" + fileName + ".png";
+        int numItems = VisualType.values().length;
+
+        int[] colors = new int[numItems];
+
+        for (int i = 0; i < numItems; i++) {
+            System.out.printf("enter theme color #%x: ", (i + 1));
+            String color = input.nextLine().replace("0x", "").replace("#", "");
+            colors[i] = Integer.parseInt(color, 16);
+        }
+
+        System.out.println(Arrays.toString(colors));
+
+        int width = numItems * Setup.BAR_SIZE;
+
+        outputPhoto(pathToWriteTo, colors, width);
+    }
+
+    private static void outputPhoto(String filePath, int[] colors, int width) {
+
+        File outputFile = new File(filePath);
+        System.out.println(outputFile);
+
+        int height = Setup.BAR_SIZE * 4;
+
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+        Graphics2D g = image.createGraphics();
+
+        for (int i = 0; i < colors.length; i++) {
+            int x = i * Setup.BAR_SIZE;
+            g.setColor(new Color(colors[i]));
+            g.fillRect(x, 0, Setup.BAR_SIZE, height);
+        }
+
+        g.dispose();
+
+        try {
+            ImageIO.write(image, "png", outputFile);
+            System.out.println("I CAME, I SAW, I WROTE");
+        } catch (IOException e) {
+            Setup.handleError(e);
+        }
+        System.out.println(filePath);
+        ProcessBuilder builder = new ProcessBuilder("explorer.exe", outputFile.getAbsolutePath());
+
+        try {
+            builder.start();
+        } catch (Exception e) {
+            Setup.handleError(e);
+        }
 
     }
 

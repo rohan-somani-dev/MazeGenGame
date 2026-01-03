@@ -1,5 +1,7 @@
 package ui;
 
+import config.Setup;
+import ui.themes.VisualType;
 import utilities.ImageUtils;
 import utilities.Renderable;
 
@@ -13,33 +15,27 @@ import java.awt.*;
  */
 public class Button extends JButton implements Renderable {
 
+    private final VisualType themeColorType;
+
     /**
      * initialize a button with a string to the icon and the color for it to be recolored to.
      *
      * @param iconPath the path to the icon to be set as the button label
-     * @param newColor new color for it to be changed to.
+     * @param visualType new color type for it to be changed to.
      */
-    public Button(String iconPath, Color newColor) {
-        this(new ImageIcon(iconPath), newColor);
+    public Button(String iconPath, VisualType visualType) {
+        this(new ImageIcon(iconPath), visualType);
     }
 
-    /**
-     * initialize a button with an icon and a new color
-     *
-     * @param icon     the icon to be set as the button label and recolored
-     * @param newColor the color for the icon to be recolored to
-     */
-    public Button(ImageIcon icon, Color newColor) {
-        this(ImageUtils.recolorIcon(icon, newColor));
-    }
 
     /**
      * initialize a button with an icon as its label.
      *
      * @param icon the icon to be set as its label.
      */
-    public Button(ImageIcon icon) {
+    private Button(ImageIcon icon, VisualType visualType) {
         super(icon);
+        this.themeColorType = visualType;
 
         setFocusable(false);
         setBorderPainted(false);
@@ -57,12 +53,27 @@ public class Button extends JButton implements Renderable {
         setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 
-    private void resetIcon(ImageIcon icon) {
+    private void resetIcon() {
         int minDimension = Math.min(getWidth(), getHeight());
 
-        Image scaled = icon.getImage().getScaledInstance(minDimension, minDimension, Image.SCALE_SMOOTH);
+        Image scaled =
+                ((ImageIcon) getIcon())
+                        .getImage().
+                        getScaledInstance(minDimension, minDimension, Image.SCALE_SMOOTH);
         setIcon(new ImageIcon(scaled));
+        recolor();
 
+    }
+
+    /**
+     * recolor the current icon.
+     *
+     * @post icon is recolored to match the (possibly) new themes wallColor
+     *         todo maybe think about only calling when theme is updated? seems to not impact performance a whole lot.
+     */
+    public void recolor() {
+        ImageIcon recolored = ImageUtils.recolorIcon((ImageIcon) getIcon(), Setup.getColor(this.themeColorType));
+        setIcon(recolored);
     }
 
     /**
@@ -73,7 +84,7 @@ public class Button extends JButton implements Renderable {
      */
     @Override
     public void onUpdate() {
-        resetIcon((ImageIcon) getIcon());
+        resetIcon();
     }
 
     /**

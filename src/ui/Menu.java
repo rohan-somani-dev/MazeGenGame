@@ -15,11 +15,13 @@ import java.awt.*;
 public class Menu extends JPanel implements Renderable {
 
     final JPanel buttonHolder;
-
+    final UIController controller;
     /**
      * initialize a padding for left and right, buttons and other options can be added to this in the future.
+     * @param controller the UIController that will be asked to update.
      */
-    public Menu() {
+    public Menu(UIController controller) {
+        this.controller = controller;
         setBackground(Setup.getColor(VisualType.BACKGROUND));
 
         setLayout(new BorderLayout());
@@ -32,19 +34,22 @@ public class Menu extends JPanel implements Renderable {
 
         buttonHolder.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        Button settingsButton = new Button("resources/icons/gears.png", Setup.getColor(VisualType.WALL));
+        Button settingsButton = new Button("resources/icons/gears.png", VisualType.WALL);
         settingsButton.addActionListener(e -> launchSettings());
 
         buttonHolder.add(settingsButton, BorderLayout.NORTH);
         buttonHolder.add(Box.createVerticalStrut(8));
-        buttonHolder.add(new Button("resources/icons/info.png", Setup.getColor(VisualType.WALL)), BorderLayout.SOUTH);
+        buttonHolder.add(new Button("resources/icons/info.png", VisualType.WALL), BorderLayout.SOUTH);
 
         add(buttonHolder, BorderLayout.NORTH);
     }
 
     private void launchSettings() {
-        System.out.println("LAUNCHING SETTINGS");
-        new Settings(SwingUtilities.getWindowAncestor(this));
+        new Settings(SwingUtilities.getWindowAncestor(this), this::updateController);
+    }
+
+    private void updateController() {
+        controller.update();
     }
 
     /**
@@ -63,6 +68,8 @@ public class Menu extends JPanel implements Renderable {
             Renderable r = (Renderable) component;
             r.onUpdate();
         }
+        setBackground(Setup.getColor(VisualType.BACKGROUND));
+        repaint();
     }
 
     /**

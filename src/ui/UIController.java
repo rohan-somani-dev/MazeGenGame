@@ -31,7 +31,7 @@ public class UIController extends JFrame {
         gridRenderer = new GridRenderer(grid);
 
         menuLeft = new Padding();
-        menuRight = new Menu();
+        menuRight = new Menu(this);
 
         setup();
     }
@@ -52,6 +52,7 @@ public class UIController extends JFrame {
      * @post window and process are terminated, no more code can be run.
      */
     public void exit() {
+        // TODO get rid of all threads by keeping a central thread manager, maybe a class or just in GameController.
         this.dispose();
     }
 
@@ -120,7 +121,6 @@ public class UIController extends JFrame {
      * @pre setup() has been called, JFrame initialized.
      * @post elements refreshed depending on the code
      */
-    @SuppressWarnings("unused")
     public void update(int code) {
         switch (code) {
             case Setup.MAZE_UPDATE:

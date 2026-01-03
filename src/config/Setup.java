@@ -2,7 +2,6 @@ package config;
 
 import ui.themes.Theme;
 import ui.themes.VisualType;
-import ui.themes.ThemeHolder;
 import entities.Player;
 
 import javax.imageio.ImageIO;
@@ -10,10 +9,12 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Constants, setup fields, and maps.
@@ -31,7 +32,10 @@ public class Setup {
     public static final int MAZE_UPDATE = 0b0101010;
     public static final int ALL = 0b1111;
 
-    public static final Theme theme = ThemeHolder.DARK;
+    @SuppressWarnings("CanBeFinal")
+    public static HashMap<String, Theme> themes = new HashMap<>();
+    public static Theme currentTheme;
+    public static Theme defaultTheme;
 
     //    player settings
     public static final int PLAYER_SHRINK = 5;
@@ -57,13 +61,14 @@ public class Setup {
 
     public static final int FUNCTION_SUCCESS = 0;
     public static final int INTERRUPTED_ERROR = 1;
+    public static final int BAR_SIZE = 16;
 
     public static int mazeSleepTime = 0;
     @SuppressWarnings("CanBeFinal") //temp
     public static int pathSleepTime = 3;
     public static final int STEPS_PER_REDRAW = 1;
     @SuppressWarnings("CanBeFinal") //temp
-    public static int sleepTimeBetweenPathRetrace = 1000;
+    public static int sleepTimeBetweenPathRetrace = 5;
 
     public static final File themeDir = new File("resources/themes");
 
@@ -89,6 +94,8 @@ public class Setup {
             Setup.handleError(e);
         }
         SMILE = img;
+
+        initThemes();
     }
 
     private Setup() {
@@ -107,6 +114,42 @@ public class Setup {
     }
 
     /**
+     * initialize themes. equivalent to {@code regenThemes(true)}
+     *
+     * @post themes hashmap is initialized based on the population in resources/themes
+     */
+    public static void initThemes() {
+        regenThemes(true);
+    }
+
+    /**
+     * regenerate themes, essentially checking for updates inside resources/themes.
+     *
+     * @param initialize whether to set the current theme to default.
+     * @post themes hashmap populated with {@code <Name, Theme>} from each .png inside themes
+     */
+    public static void regenThemes(boolean initialize) {
+        File[] themeFiles = getThemes();
+        if (themeFiles == null) {
+            Setup.handleError(new FileNotFoundException("NO THEME FILES!"));
+            return;
+        }
+        for (File f : themeFiles) {
+            Theme t = new Theme(f);
+            themes.put(t.name, t);
+        }
+        if (!initialize) return;
+        currentTheme = themes.get("default");
+        defaultTheme = currentTheme;
+        if (currentTheme == null) {
+            Setup.handleError(
+                    new Exception("NO DEFAULT THEME FOUND.")
+            );
+        }
+    }
+
+
+    /**
      * Get the color of a type of element
      * @pre theme is initialized, AND HAS ALL VALUES SET
      * @post a nonnull color is returned, defaulting to pure white.
@@ -114,7 +157,7 @@ public class Setup {
      * @return the obtained color from the current theme.
      */
     public static Color getColor(VisualType c) {
-        return theme.get(c);
+        return currentTheme.get(c);
     }
 
     /**
@@ -122,25 +165,31 @@ public class Setup {
      *
      * @return returns a {@code String[]} object containing all the themes, or null if it cannot find themes.
      */
-    public static String[] getThemes() {
+    public static File[] getThemes() {
         ArrayList<String> themeNames = new ArrayList<>();
         if (!themeDir.isDirectory()) {
             System.out.println("IT'S NOT A DIRECTORY");
             return null;
         }
 
-        File[] children = themeDir.listFiles(file -> file.getName().endsWith(".png"));
-        if (children == null || children.length == 0) {
-            System.out.println("IT HAS NO CHILDREN");
-            return null;
-        }
+        return themeDir.listFiles(file -> file.getName().endsWith(".png"));
+    }
 
-        for (File f : children) {
-            themeNames.add(f.getName());
-        }
-        String[] out = new String[themeNames.size()];
-        themeNames.toArray(out);
-        return out;
+    /**
+     * @return a set of all the names of the current themes.
+     */
+    public static Set<String> getThemeNames() {
+        return themes.keySet();
+    }
 
+    /**
+     * set the current theme to a theme name
+     *
+     * @param themeName the name of the theme to be changed to.
+     * @pre themes map is populated with at least a default theme
+     * @post theme is set to the param or default if not found.
+     */
+    public static void setTheme(String themeName) {
+        currentTheme = themes.getOrDefault(themeName, defaultTheme);
     }
 }

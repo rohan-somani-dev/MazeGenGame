@@ -2,7 +2,12 @@ package ui.themes;
 
 import config.Setup;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.EnumMap;
 
 /**
@@ -13,29 +18,44 @@ import java.util.EnumMap;
  * @date 2025-12-20
  */
 public class Theme {
-
+    public final String name;
     private final EnumMap<VisualType, Color> colors = new EnumMap<>(VisualType.class); // thanks! https://www.baeldung.com/java-enum-map
 
     /**
-     * Initialize theme with given colors.
-     *
-     * @param entries the key, value pair for each entry, formatted as {@code (ThemeColor, Color, ThemeColor, Color, ...)}, similar to {@code Map.of()} in future java versions
+     * Initialize theme from image file.
+     * @param file the image file to be read from as a theme. MUST HAVE WIDTH SETUP.BAR_SIZE OR WILL FAIL.
      */
-    public Theme(Object... entries) {
-        if (entries.length % 2 != 0) {
-            Setup.handleError(new IllegalArgumentException("Themes must be inputted as pairs"));
+    public Theme(File file) {
+        String fullName = file.getName();
+        int dotIndex = fullName.lastIndexOf('.');
+        if (dotIndex < 0) {
+            Setup.handleError(
+                    new IndexOutOfBoundsException("NO EXTENSION")
+            );
         }
-        try {
-            for (int i = 0; i < entries.length; i += 2) {
-                colors.put(
-                        (VisualType) entries[i],
-                        (Color) entries[i + 1]
-                );
-            }
+        name = fullName.substring(0, dotIndex);
 
-        } catch (ClassCastException e) {
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(file);
+        } catch (IOException e) {
+            System.out.println("COULD NOT READ THEME FILE: " + file.getPath());
             Setup.handleError(e);
         }
+
+        if (image == null) {
+            return;
+        }
+
+        VisualType[] entries = VisualType.values();
+        for (int i = 0; i < entries.length; i++) {
+            VisualType entry = entries[i];
+            int x = i * Setup.BAR_SIZE;
+            Color c = new Color(image.getRGB(x, 0));
+
+            colors.put(entry, c);
+        }
+
 
     }
 
@@ -50,5 +70,20 @@ public class Theme {
     public Color get(VisualType visualType) {
         return colors.getOrDefault(visualType, new Color(0xffffff));
     }
+
+    /**
+     * print the current theme. debug method.
+     */
+    @SuppressWarnings("unused")
+    public void print() {
+        ArrayList<String> colorList = new ArrayList<>();
+        for (VisualType vt : colors.keySet()) {
+            String curr = Integer.toHexString(colors.get(vt).getRGB());
+
+            colorList.add(curr.substring(2));
+        }
+        System.out.println(colorList);
+    }
+
 
 }

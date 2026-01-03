@@ -63,6 +63,7 @@ public class GridRenderer extends JPanel implements Renderable {
      */
     @Override
     public void paintComponent(Graphics g) {
+        setBackground(Setup.getColor(VisualType.BACKGROUND));
         super.paintComponent(g);
 
         int width = getWidth();

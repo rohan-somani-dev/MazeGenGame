@@ -28,6 +28,8 @@ public class Padding extends JPanel implements Renderable {
      */
     @Override
     public void onUpdate() {
+        setBackground(Setup.getColor(VisualType.BACKGROUND));
+        repaint();
     }
 
     /**

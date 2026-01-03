@@ -3,10 +3,12 @@ package core;
 import config.Setup;
 import entities.Player;
 import ui.UIController;
+import utilities.ImageUtils;
 import utilities.UpdateListener;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Scanner;
 
 /**
  * A game controller that implements {@link Grid} and {@link Player} to start and run the game.
@@ -112,6 +114,14 @@ public class GameController implements UpdateListener {
 
         if (key == KeyEvent.VK_Q) {
             UI.exit();
+        }
+        if (key == KeyEvent.VK_HOME) {
+            new Thread(() -> {
+                Scanner input = new Scanner(System.in);
+                System.out.print("Enter the name of the theme file to be written to: ");
+                ImageUtils.writeTheme(input, input.nextLine().trim());
+                input.close();
+            }).start();
         }
 
         if (!mazeFinished) return;
