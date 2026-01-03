@@ -7,7 +7,6 @@ import utilities.UpdateListener;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 
 /**
  * A game controller that implements {@link Grid} and {@link Player} to start and run the game.
@@ -79,7 +78,7 @@ public class GameController implements UpdateListener {
         mazeFinished = true;
         player = new Player(grid.start);
         grid.initPlayer(player);
-        UI.update(Setup.MAZE_FINISHED);
+        UI.update(Setup.MAZE_UPDATE);
     }
 
     /**
@@ -103,13 +102,19 @@ public class GameController implements UpdateListener {
     /**
      * handles the input. checks if the input is in list of player movements ({@link Setup#KEY_BINDINGS}) and if not
      * it will check if the path should start generating.
+     *
      * @param keyEvent the key event.
      * @pre grid has a player, and can be called upon.
      * @post player is moved, or path generation started, or nothing.
      */
     void handleKeyPress(KeyEvent keyEvent) {
-        if (!mazeFinished) return;
         int key = keyEvent.getKeyCode();
+
+        if (key == KeyEvent.VK_Q) {
+            UI.exit();
+        }
+
+        if (!mazeFinished) return;
 
         Player.Direction move = Setup.KEY_BINDINGS.getOrDefault(key, null);
         if (move != null) {
@@ -126,9 +131,9 @@ public class GameController implements UpdateListener {
     }
 
     /**
+     * @param code the code to be updated from {@link Setup};
      * @pre UI is ready to be updated.
      * @post ui gets updated or queued to update with SwingUtilities.
-     * @param code the code to be updated from {@link Setup};
      */
     @Override
     public void onUpdate(int code) {

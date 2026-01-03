@@ -30,7 +30,6 @@ public class GridRenderer extends JPanel implements Renderable {
         this.grid = grid;
         setBackground(Setup.getColor(VisualType.BACKGROUND));
         setFocusable(false);
-        setPreferredSize(new Dimension(Setup.WINDOW_SIZE, Setup.WINDOW_SIZE));
         setOpaque(true);
 
     }
@@ -66,12 +65,31 @@ public class GridRenderer extends JPanel implements Renderable {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        int minDimension = Math.min(getWidth(), getHeight());
+        int width = getWidth();
+        int height = getHeight();
+
+        int minDimension = Math.min(width, height);
+
+        int xOffset = (width - minDimension) / 2;
+        int yOffset = (height - minDimension) / 2;
+
+        //to center panel
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.translate(xOffset, yOffset);
+
         int nodeSize = minDimension / grid.gridSize;
 
         for (Node node : grid.getNodes()) {
-            NodeDrawer.draw(g, node, nodeSize, false, false);
+            NodeDrawer.draw(g2, node, nodeSize, false, false);
         }
+
+        g2.dispose();
+    }
+
+    @Override
+    public Dimension getPreferredSize(){
+        int size = Math.min(getParent().getWidth(), getParent().getHeight());
+        return new Dimension(size, size);
     }
 
 }

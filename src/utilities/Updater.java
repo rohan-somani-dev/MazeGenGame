@@ -30,7 +30,7 @@ public interface Updater {
      */
     default void notifyListeners() {
         for (UpdateListener listener : listeners) {
-            listener.onUpdate(Setup.MAZE_FINISHED);
+            listener.onUpdate(Setup.MAZE_UPDATE);
         }
     }
 }

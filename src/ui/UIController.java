@@ -1,36 +1,44 @@
 package ui;
 
-
 import config.Setup;
 import core.Grid;
 import utilities.Renderable;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
-/** a UI controller for all components, very expandable.
+import java.awt.*;
+
+/**
+ * a UI controller for all components, very expandable.
+ *
  * @author RohanSomani
  * @name UIController
  * @date 2025-12-17
  */
 public class UIController extends JFrame {
 
-    private final List<Renderable> elements = new ArrayList<>();
-
+    final Renderable menuLeft;
+    final GridRenderer gridRenderer;
+    final Renderable menuRight;
     /**
      * Initialize the window, with a title and basic grid.
-     * @param grid grid to be used for initialization
+     *
+     * @param grid  grid to be used for initialization
      * @param title the title of the window.
      */
     public UIController(Grid grid, String title) {
         super(title);
-        GridRenderer gr = new GridRenderer(grid);
-        elements.add(gr);
+        gridRenderer = new GridRenderer(grid);
+
+        menuLeft  = new Menu();
+        menuRight = new Menu();
+
+
         setup();
     }
 
     /**
      * initialize window, with title "Maze Game"
+     *
      * @param grid the grid to be used for initialization.
      */
     public UIController(Grid grid) {
@@ -38,24 +46,73 @@ public class UIController extends JFrame {
     }
 
     /**
+     * close the application and end process thanks to {@code JFrame.EXIT_ON_CLOSE}
+     * @pre JFrame initialized.
+     * @post window and process are terminated, no more code can be run.
+     */
+    public void exit() {
+        this.dispose();
+    }
+
+    /**
      * Set basic JFrame properties and all renderable elements to it.
+     *
      * @pre initialized ui controller, elements list is not empty.
      * @post JFrame properties initialized, all elements in JFrame, formatted JFrame.
      */
     private void setup() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setFocusable(true);
-        for (Renderable r : elements) {
-            this.add(r.getComponent());
-        }
-        pack();
+
+
+        setLayout(new GridBagLayout());
+
+        GridBagConstraints cLeft = new GridBagConstraints();
+        cLeft.gridx = 0;
+        cLeft.gridy = 0;
+        cLeft.weightx = 1;
+        cLeft.weighty = 1;
+        cLeft.fill = GridBagConstraints.BOTH;
+        this.add(menuLeft.getComponent(), cLeft);
+
+        GridBagConstraints cCenter = new GridBagConstraints();
+        cCenter.gridx = 1;
+        cCenter.gridy = 0;
+        cCenter.weightx = 2;
+        cCenter.weighty = 1;
+        cCenter.fill = GridBagConstraints.BOTH;
+        this.add(gridRenderer.getComponent(), cCenter);
+
+        GridBagConstraints cRight = new GridBagConstraints();
+        cRight.gridx = 2;
+        cRight.gridy = 0;
+        cRight.weightx = 1;
+        cRight.weighty = 1;
+        cRight.fill = GridBagConstraints.BOTH;
+        this.add(menuRight.getComponent(), cRight);
+
+        setSize(new Dimension(Setup.WINDOW_WIDTH, Setup.MAZE_SIZE));
         setLocationRelativeTo(null);
+        setupFullscreen();
         setVisible(true);
         update();
     }
 
+    private void setupFullscreen(){
+        setUndecorated(true);
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+
+        if (gd.isFullScreenSupported()){
+            gd.setFullScreenWindow(this);
+        } else {
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
+    }
+
     /**
      * Calls update() with everything being refreshed.
+     *
      * @pre setup() has been called, JFrame initialized.
      * @post everything refreshes its rendering.
      */
@@ -65,15 +122,24 @@ public class UIController extends JFrame {
 
     /**
      * Update everything with different specifications.
+     *
+     * @param code the code from {@link config.Setup} to be used.
      * @pre setup() has been called, JFrame initialized.
      * @post elements refreshed depending on the code
-     * @param code the code from {@link config.Setup} to be used.
      */
     @SuppressWarnings("unused")
     public void update(int code) {
-        for (Renderable r : elements) {
-            r.onUpdate();
+        switch (code){
+            case Setup.MAZE_UPDATE:
+                gridRenderer.onUpdate();
+                break;
+            case Setup.ALL:
+            default:
+                menuLeft.onUpdate();
+                gridRenderer.onUpdate();
+                menuRight.onUpdate();
         }
+
     }
 
 }
