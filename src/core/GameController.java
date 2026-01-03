@@ -119,7 +119,7 @@ public class GameController implements UpdateListener {
         Player.Direction move = Setup.KEY_BINDINGS.getOrDefault(key, null);
         if (move != null) {
             if (grid.movePlayer(player, move)) {
-                UI.update();
+                UI.update(Setup.MAZE_UPDATE);
             }
         }
 

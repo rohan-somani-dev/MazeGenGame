@@ -1,6 +1,6 @@
 package utilities;
 
-import config.themes.VisualType;
+import ui.themes.VisualType;
 
 /**
  * The different cell states that a Node can take.

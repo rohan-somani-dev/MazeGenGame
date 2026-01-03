@@ -1,8 +1,8 @@
 package config;
 
-import config.themes.Theme;
-import config.themes.VisualType;
-import config.themes.ThemeHolder;
+import ui.themes.Theme;
+import ui.themes.VisualType;
+import ui.themes.ThemeHolder;
 import entities.Player;
 
 import javax.imageio.ImageIO;
@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,6 +65,8 @@ public class Setup {
     @SuppressWarnings("CanBeFinal") //temp
     public static int sleepTimeBetweenPathRetrace = 1000;
 
+    public static final File themeDir = new File("resources/themes");
+
     static {
 
         KEY_BINDINGS.put(KeyEvent.VK_W, Player.Direction.UP);
@@ -112,5 +115,32 @@ public class Setup {
      */
     public static Color getColor(VisualType c) {
         return theme.get(c);
+    }
+
+    /**
+     * return a list of the current selectable themes.
+     *
+     * @return returns a {@code String[]} object containing all the themes, or null if it cannot find themes.
+     */
+    public static String[] getThemes() {
+        ArrayList<String> themeNames = new ArrayList<>();
+        if (!themeDir.isDirectory()) {
+            System.out.println("IT'S NOT A DIRECTORY");
+            return null;
+        }
+
+        File[] children = themeDir.listFiles(file -> file.getName().endsWith(".png"));
+        if (children == null || children.length == 0) {
+            System.out.println("IT HAS NO CHILDREN");
+            return null;
+        }
+
+        for (File f : children) {
+            themeNames.add(f.getName());
+        }
+        String[] out = new String[themeNames.size()];
+        themeNames.toArray(out);
+        return out;
+
     }
 }

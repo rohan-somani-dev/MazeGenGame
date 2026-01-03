@@ -19,6 +19,7 @@ public class UIController extends JFrame {
     final Renderable menuLeft;
     final GridRenderer gridRenderer;
     final Renderable menuRight;
+
     /**
      * Initialize the window, with a title and basic grid.
      *
@@ -29,9 +30,8 @@ public class UIController extends JFrame {
         super(title);
         gridRenderer = new GridRenderer(grid);
 
-        menuLeft  = new Menu();
+        menuLeft = new Padding();
         menuRight = new Menu();
-
 
         setup();
     }
@@ -47,6 +47,7 @@ public class UIController extends JFrame {
 
     /**
      * close the application and end process thanks to {@code JFrame.EXIT_ON_CLOSE}
+     *
      * @pre JFrame initialized.
      * @post window and process are terminated, no more code can be run.
      */
@@ -63,7 +64,6 @@ public class UIController extends JFrame {
     private void setup() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setFocusable(true);
-
 
         setLayout(new GridBagLayout());
 
@@ -98,16 +98,9 @@ public class UIController extends JFrame {
         update();
     }
 
-    private void setupFullscreen(){
+    private void setupFullscreen() {
         setUndecorated(true);
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice gd = ge.getDefaultScreenDevice();
-
-        if (gd.isFullScreenSupported()){
-            gd.setFullScreenWindow(this);
-        } else {
-            setExtendedState(JFrame.MAXIMIZED_BOTH);
-        }
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
     /**
@@ -129,7 +122,7 @@ public class UIController extends JFrame {
      */
     @SuppressWarnings("unused")
     public void update(int code) {
-        switch (code){
+        switch (code) {
             case Setup.MAZE_UPDATE:
                 gridRenderer.onUpdate();
                 break;

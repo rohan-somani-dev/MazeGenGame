@@ -1,10 +1,11 @@
 package ui;
 
 import config.Setup;
-import config.themes.VisualType;
+import ui.themes.VisualType;
 import utilities.Renderable;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author RohanSomani
@@ -13,11 +14,37 @@ import javax.swing.*;
  */
 public class Menu extends JPanel implements Renderable {
 
+    final JPanel buttonHolder;
+
     /**
      * initialize a padding for left and right, buttons and other options can be added to this in the future.
      */
     public Menu() {
-        this.setBackground(Setup.getColor(VisualType.BACKGROUND));
+        setBackground(Setup.getColor(VisualType.BACKGROUND));
+
+        setLayout(new BorderLayout());
+
+        setFocusable(false);
+
+        buttonHolder = new JPanel();
+        buttonHolder.setOpaque(false);
+        buttonHolder.setLayout(new BoxLayout(buttonHolder, BoxLayout.Y_AXIS));
+
+        buttonHolder.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        Button settingsButton = new Button("resources/icons/gears.png", Setup.getColor(VisualType.WALL));
+        settingsButton.addActionListener(e -> launchSettings());
+
+        buttonHolder.add(settingsButton, BorderLayout.NORTH);
+        buttonHolder.add(Box.createVerticalStrut(8));
+        buttonHolder.add(new Button("resources/icons/info.png", Setup.getColor(VisualType.WALL)), BorderLayout.SOUTH);
+
+        add(buttonHolder, BorderLayout.NORTH);
+    }
+
+    private void launchSettings() {
+        System.out.println("LAUNCHING SETTINGS");
+        new Settings(SwingUtilities.getWindowAncestor(this));
     }
 
     /**
@@ -28,7 +55,14 @@ public class Menu extends JPanel implements Renderable {
      */
     @Override
     public void onUpdate() {
-        //do something
+        Component[] components = buttonHolder.getComponents();
+        for (Component component : components) {
+            if (!(component instanceof Renderable)) {
+                continue;
+            }
+            Renderable r = (Renderable) component;
+            r.onUpdate();
+        }
     }
 
     /**

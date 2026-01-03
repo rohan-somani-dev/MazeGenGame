@@ -1,4 +1,4 @@
-package config.themes;
+package ui.themes;
 
 import config.Setup;
 

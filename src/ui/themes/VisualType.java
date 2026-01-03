@@ -1,4 +1,4 @@
-package config.themes;
+package ui.themes;
 
 /**
  * A helper class that dictates the type of variables needed for a theme.

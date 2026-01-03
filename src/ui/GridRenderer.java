@@ -1,7 +1,7 @@
 package ui;
 
 import config.Setup;
-import config.themes.VisualType;
+import ui.themes.VisualType;
 import core.Grid;
 import core.Node;
 import utilities.Renderable;
