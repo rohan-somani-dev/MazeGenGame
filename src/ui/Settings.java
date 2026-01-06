@@ -1,6 +1,7 @@
 package ui;
 
 import config.Setup;
+import ui.styled.ThemeDropDown;
 import ui.themes.VisualType;
 
 import javax.swing.*;
@@ -20,6 +21,8 @@ public class Settings extends JDialog {
 
     final Window parent;
 
+    final Runnable requestUpdate;
+
     /**
      * initialize a settings dialog with a dropdown for theme selection and other options (?)
      * TODO fix styling cuz wtf is going on
@@ -30,30 +33,12 @@ public class Settings extends JDialog {
         super(parent, "Settings");
 
         this.parent = parent;
+        this.requestUpdate = requestUpdate;
         setupDialog();
-        Setup.regenThemes(false);
-        Set<String> themes = Setup.getThemeNames();
-        String[] names = new String[themes.size()];
-        themes.toArray(names);
-        if (themes.isEmpty()) {
-            Setup.handleError(
-                    new FileNotFoundException("No theme files!")
-            );
-            dispose();
-            return;
-        }
-        JComboBox<String> themeChooser = new JComboBox<>(names);
-        System.out.println(Setup.currentTheme.name);
-        themeChooser.setSelectedItem(Setup.currentTheme.name);
-
-        themeChooser.addActionListener((e) -> {
-                    Setup.setTheme((String) themeChooser.getSelectedItem());
-                    requestUpdate.run();
-                }
-        );
+        ThemeDropDown themeChooser = new ThemeDropDown(requestUpdate);
         add(themeChooser);
-
     }
+
 
     private void setupDialog() {
         setAlwaysOnTop(true);

@@ -1,4 +1,4 @@
-package ui;
+package ui.styled;
 
 import config.Setup;
 import ui.themes.VisualType;
@@ -7,13 +7,14 @@ import utilities.Renderable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * @author RohanSomani
  * @name Button
  * @date 2026-01-02
  */
-public class Button extends JButton implements Renderable {
+public class StyledIconButton extends JButton implements Renderable {
 
     private final VisualType themeColorType;
 
@@ -23,7 +24,7 @@ public class Button extends JButton implements Renderable {
      * @param iconPath the path to the icon to be set as the button label
      * @param visualType new color type for it to be changed to.
      */
-    public Button(String iconPath, VisualType visualType) {
+    public StyledIconButton(String iconPath, VisualType visualType) {
         this(new ImageIcon(iconPath), visualType);
     }
 
@@ -33,7 +34,7 @@ public class Button extends JButton implements Renderable {
      *
      * @param icon the icon to be set as its label.
      */
-    private Button(ImageIcon icon, VisualType visualType) {
+    private StyledIconButton(ImageIcon icon, VisualType visualType) {
         super(icon);
         this.themeColorType = visualType;
 
@@ -72,8 +73,18 @@ public class Button extends JButton implements Renderable {
      *         todo maybe think about only calling when theme is updated? seems to not impact performance a whole lot.
      */
     public void recolor() {
-        ImageIcon recolored = ImageUtils.recolorIcon((ImageIcon) getIcon(), Setup.getColor(this.themeColorType));
-        setIcon(recolored);
+
+        Image icon = ((ImageIcon) getIcon()).getImage();
+
+        //draw the icon onto a new buffered image
+        BufferedImage buffered = new BufferedImage(icon.getWidth(null), icon.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = Setup.prepareGraphics(buffered.createGraphics());
+        g2.drawImage(icon, 0, 0, null);
+        g2.dispose();
+
+
+        BufferedImage recolored = ImageUtils.recolorImage(buffered, Setup.getColor(this.themeColorType));
+        setIcon(new ImageIcon(recolored));
     }
 
     /**

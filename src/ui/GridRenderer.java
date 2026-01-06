@@ -63,8 +63,9 @@ public class GridRenderer extends JPanel implements Renderable {
      */
     @Override
     public void paintComponent(Graphics g) {
+        Graphics2D g2 = Setup.prepareGraphics(g);
         setBackground(Setup.getColor(VisualType.BACKGROUND));
-        super.paintComponent(g);
+        super.paintComponent(g2);
 
         int width = getWidth();
         int height = getHeight();
@@ -75,16 +76,16 @@ public class GridRenderer extends JPanel implements Renderable {
         int yOffset = (height - minDimension) / 2;
 
         //to center panel
-        Graphics2D g2 = (Graphics2D) g.create();
-        g2.translate(xOffset, yOffset);
+        Graphics2D center = Setup.prepareGraphics(g2);
+        center.translate(xOffset, yOffset);
 
         int nodeSize = minDimension / grid.gridSize;
 
         for (Node node : grid.getNodes()) {
-            NodeDrawer.draw(g2, node, nodeSize, false, false);
+            NodeDrawer.draw(center, node, nodeSize, false, false);
         }
 
-        g2.dispose();
+        center.dispose();
     }
 
     @Override

@@ -31,6 +31,8 @@ public class Setup {
 //    TODO: ADD CODES TO A MAP!
     public static final int MAZE_UPDATE = 0b0101010;
     public static final int ALL = 0b1111;
+    public static final int THEME_NOT_FOUND_ERROR = -1;
+    public static final int PLAYER_ARC = 25;
 
     @SuppressWarnings("CanBeFinal")
     public static HashMap<String, Theme> themes = new HashMap<>();
@@ -38,7 +40,7 @@ public class Setup {
     public static Theme defaultTheme;
 
     //    player settings
-    public static final int PLAYER_SHRINK = 5;
+    public static final int PLAYER_SHRINK = 7;
     public static final Map<Integer, Player.Direction> KEY_BINDINGS = new HashMap<>();
 
 
@@ -88,7 +90,7 @@ public class Setup {
 
         BufferedImage img = null;
         try {
-            File f = new File("resources/smile.png");
+            File f = new File("resources/icons/player.png");
             img = ImageIO.read(f);
         } catch (IOException e) {
             Setup.handleError(e);
@@ -129,7 +131,7 @@ public class Setup {
      * @post themes hashmap populated with {@code <Name, Theme>} from each .png inside themes
      */
     public static void regenThemes(boolean initialize) {
-        File[] themeFiles = getThemes();
+        File[] themeFiles = getThemeFiles();
         if (themeFiles == null) {
             Setup.handleError(new FileNotFoundException("NO THEME FILES!"));
             return;
@@ -160,12 +162,17 @@ public class Setup {
         return currentTheme.get(c);
     }
 
+    public static HashMap<String, Theme> getThemes(){
+        regenThemes(false);
+        return themes;
+    }
+
     /**
      * return a list of the current selectable themes.
      *
      * @return returns a {@code String[]} object containing all the themes, or null if it cannot find themes.
      */
-    public static File[] getThemes() {
+    public static File[] getThemeFiles() {
         ArrayList<String> themeNames = new ArrayList<>();
         if (!themeDir.isDirectory()) {
             System.out.println("IT'S NOT A DIRECTORY");
@@ -191,5 +198,13 @@ public class Setup {
      */
     public static void setTheme(String themeName) {
         currentTheme = themes.getOrDefault(themeName, defaultTheme);
+    }
+
+    public static Graphics2D prepareGraphics(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        return g2;
     }
 }

@@ -4,5 +4,16 @@
 *.iml
 *.xml
 
-.out/
-.saves/
+bin/
+saves/
+# Ignore Gradle project-specific cache directory
+.gradle/
+.classpath/
+.gitattributes/
+.project/
+.settings/
+
+# Ignore Gradle build output directory
+build/
+
+*gradle*

@@ -1,6 +1,7 @@
 package ui;
 
 import config.Setup;
+import ui.styled.StyledIconButton;
 import ui.themes.VisualType;
 import utilities.Renderable;
 
@@ -34,12 +35,12 @@ public class Menu extends JPanel implements Renderable {
 
         buttonHolder.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        Button settingsButton = new Button("resources/icons/gears.png", VisualType.WALL);
+        StyledIconButton settingsButton = new StyledIconButton("resources/icons/gears.png", VisualType.WALL);
         settingsButton.addActionListener(e -> launchSettings());
 
         buttonHolder.add(settingsButton, BorderLayout.NORTH);
         buttonHolder.add(Box.createVerticalStrut(8));
-        buttonHolder.add(new Button("resources/icons/info.png", VisualType.WALL), BorderLayout.SOUTH);
+        buttonHolder.add(new StyledIconButton("resources/icons/info.png", VisualType.WALL), BorderLayout.SOUTH);
 
         add(buttonHolder, BorderLayout.NORTH);
     }

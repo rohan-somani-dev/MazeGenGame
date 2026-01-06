@@ -4,7 +4,6 @@ import config.Setup;
 import ui.themes.VisualType;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -26,36 +25,72 @@ public class ImageUtils {
      * @param newColor the new color for the icon to be set to
      * @return the recolored icon.
      */
-    public static ImageIcon recolorIcon(ImageIcon icon, Color newColor) {
-        Image image = icon.getImage();
+    public static BufferedImage recolorImage(BufferedImage image, Color newColor) {
 
         int width = image.getWidth(null);
         int height = image.getHeight(null);
 
-        BufferedImage original = new BufferedImage(
-                width,
-                height,
-                BufferedImage.TYPE_INT_ARGB
-        );
-
-        Graphics2D originalGraphics = original.createGraphics();
-        originalGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); //without this the recolored image would have sharp lines.
-        originalGraphics.drawImage(image, 0, 0, null);
-        originalGraphics.dispose();
-
         BufferedImage recolored = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = recolored.createGraphics();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Graphics2D g2 = Setup.prepareGraphics(recolored.createGraphics());
 
         g2.setColor(newColor);
         g2.fillRect(0, 0, width, height);
 
         g2.setComposite(AlphaComposite.DstAtop);
-        g2.drawImage(original, 0, 0, null);
+        g2.drawImage(image, 0, 0, null);
 
         g2.dispose();
 
-        return new ImageIcon(recolored);
+        return recolored;
+    }
+
+    public static BufferedImage tint(BufferedImage image, Color tintColor) {
+//        BufferedImage tinted = new BufferedImage();
+        int width = image.getWidth(null);
+        int height = image.getHeight(null);
+
+        BufferedImage tinted = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                int current = image.getRGB(x, y);
+
+                // ints in java are 32 bits (4 bytes). colors returned from get rgb return a 32 bit int
+                // AAAAAAAA RRRRRRRR GGGGGGGG BBBBBBBB
+                // the first bit shift (>>24) moves the first byte to the least significant position,
+                // allowing us to mask it with 0xFF removing any bytes preceding it, isolating the channel
+                // which is in this case alpha.
+                // repeat for all other shifts with 16, 8,
+                // and finally 0, because the blue channel is already in the least significant bit so no shifting is needed.
+                // note that we still mask, however, because otherwise int b would be the whole 32 bits which is not what we want.
+
+                int a = (current >> 24) & 0xFF; //most significant byte
+                int r = (current >> 16) & 0xFF;
+                int g = (current >> 8) & 0xFF;
+                int b = current & 0xFF; // least significant byte
+
+                int newR = (r * tintColor.getRed()) / 255;
+                int newG = (g * tintColor.getGreen()) / 255;
+                int newB = (b * tintColor.getBlue()) / 255;
+
+                // finally, after doing the recalculations (see: )
+                // we can shift them back int to the new 32 bit int the same way we got them out.
+                // notice we're using bitwise | (or) instead of & (and) so that the channels get added
+//              // rather than masking each other.
+
+                int out =
+                        (a << 24) |
+                                (newR << 16) |
+                                (newG << 8) |
+                                (newB);
+                tinted.setRGB(x, y, out);
+
+                //tldr: fancy bit shifting, image multiplication, leave us with a tinted image.
+                //also, i had to google this, but i hope this explanation was an indication of my understanding of the code.
+            }
+        }
+
+        return tinted;
     }
 
     /**
@@ -93,7 +128,7 @@ public class ImageUtils {
 
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-        Graphics2D g = image.createGraphics();
+        Graphics2D g = Setup.prepareGraphics(image.createGraphics());
 
         for (int i = 0; i < colors.length; i++) {
             int x = i * Setup.BAR_SIZE;
