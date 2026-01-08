@@ -53,6 +53,7 @@ public class UIController extends JFrame {
      */
     public void exit() {
         // TODO get rid of all threads by keeping a central thread manager, maybe a class or just in GameController.
+        Setup.save();
         this.dispose();
     }
 
