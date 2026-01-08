@@ -15,72 +15,89 @@ import java.awt.*;
  */
 public class Menu extends JPanel implements Renderable {
 
-    final JPanel buttonHolder;
-    final UIController controller;
-    /**
-     * initialize a padding for left and right, buttons and other options can be added to this in the future.
-     * @param controller the UIController that will be asked to update.
-     */
-    public Menu(UIController controller) {
-        this.controller = controller;
-        setBackground(Setup.getColor(VisualType.BACKGROUND));
+	final JPanel buttonHolder;
+	final UIController controller;
 
-        setLayout(new BorderLayout());
+	private boolean settingsOpen = false;
 
-        setFocusable(false);
+	/**
+	 * initialize the right menu, currently settings and info button held on it.
+	 * 
+	 * @param controller
+	 *            the UIController that will be asked to update.
+	 */
+	public Menu(UIController controller) {
+		this.controller = controller;
+		setBackground(Setup.getColor(VisualType.BACKGROUND));
 
-        buttonHolder = new JPanel();
-        buttonHolder.setOpaque(false);
-        buttonHolder.setLayout(new BoxLayout(buttonHolder, BoxLayout.Y_AXIS));
+		setLayout(new BorderLayout());
 
-        buttonHolder.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		setFocusable(false);
 
-        StyledIconButton settingsButton = new StyledIconButton("resources/icons/gears.png", VisualType.WALL);
-        settingsButton.addActionListener(e -> launchSettings());
+		buttonHolder = new JPanel();
+		buttonHolder.setOpaque(false);
+		buttonHolder.setLayout(new BoxLayout(buttonHolder, BoxLayout.Y_AXIS));
 
-        buttonHolder.add(settingsButton, BorderLayout.NORTH);
-        buttonHolder.add(Box.createVerticalStrut(8));
-        buttonHolder.add(new StyledIconButton("resources/icons/info.png", VisualType.WALL), BorderLayout.SOUTH);
+		buttonHolder.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        add(buttonHolder, BorderLayout.NORTH);
-    }
+		StyledIconButton settingsButton = new StyledIconButton("resources/icons/gears.png", VisualType.WALL);
+		settingsButton.addActionListener(e -> launchSettings());
 
-    private void launchSettings() {
-        new Settings(SwingUtilities.getWindowAncestor(this), this::updateController);
-    }
+		buttonHolder.add(settingsButton, BorderLayout.NORTH);
+		buttonHolder.add(Box.createVerticalStrut(8));
+		buttonHolder.add(new StyledIconButton("resources/icons/info.png", VisualType.WALL), BorderLayout.SOUTH);
 
-    private void updateController() {
-        controller.update();
-    }
+		add(buttonHolder, BorderLayout.NORTH);
+	}
 
-    /**
-     * function to be called to repaint, can implement other code but mostly used to call {@code this.repaint()}.
-     *
-     * @pre ready to be drawn.
-     * @post update has taken place, everything that needed to be drawn is drawn.
-     */
-    @Override
-    public void onUpdate() {
-        Component[] components = buttonHolder.getComponents();
-        for (Component component : components) {
-            if (!(component instanceof Renderable)) {
-                continue;
-            }
-            Renderable r = (Renderable) component;
-            r.onUpdate();
-        }
-        setBackground(Setup.getColor(VisualType.BACKGROUND));
-        repaint();
-    }
+	private void launchSettings() {
+		if (settingsOpen) return; //stops the user from opening settings multiple times. 
+		settingsOpen = true;
+		new Settings(
+				SwingUtilities.getWindowAncestor(this), //gets the parent jframe, the game. 
+				this::onSettingsUpdate, 
+				this::onSettingsClosed
+				);
+	}
 
-    /**
-     * get the underlying component of self.
-     *
-     * @return the component part of the implementing object.
-     */
-    @Override
-    public JComponent getComponent() {
-        return this;
-    }
-    //BEFORE YOU WRITE ANYTHING ADD A DESCRIPTION!!
+	private void onSettingsUpdate() {
+		controller.update();
+	}
+
+	private void onSettingsClosed() {
+		settingsOpen = false;
+	}
+
+	/**
+	 * function to be called to repaint, can implement other code but mostly
+	 * used to call {@code this.repaint()}.
+	 *
+	 * @pre ready to be drawn.
+	 * @post update has taken place, everything that needed to be drawn is
+	 *       drawn.
+	 */
+	@Override
+	public void onUpdate() {
+		Component[] components = buttonHolder.getComponents();
+		for (Component component : components) {
+			if (!(component instanceof Renderable)) {
+				continue;
+			}
+			Renderable r = (Renderable) component;
+			r.onUpdate();
+		}
+		setBackground(Setup.getColor(VisualType.BACKGROUND));
+		repaint();
+	}
+
+	/**
+	 * get the underlying component of self.
+	 *
+	 * @return the component part of the implementing object.
+	 */
+	@Override
+	public JComponent getComponent() {
+		return this;
+	}
+	// BEFORE YOU WRITE ANYTHING ADD A DESCRIPTION!!
 }

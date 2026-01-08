@@ -6,6 +6,8 @@ import ui.themes.VisualType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.util.Set;
 
@@ -29,7 +31,7 @@ public class Settings extends JDialog {
      * @param parent the parent of the dialog for it to be anchored to.
      * @param requestUpdate the function to call when an update has been made.
      */
-    public Settings(Window parent, Runnable requestUpdate) {
+    public Settings(Window parent, Runnable requestUpdate, Runnable settingsClosed) {
         super(parent, "Settings");
 
         this.parent = parent;
@@ -37,6 +39,12 @@ public class Settings extends JDialog {
         setupDialog();
         ThemeDropDown themeChooser = new ThemeDropDown(requestUpdate);
         add(themeChooser);
+        this.addWindowListener(new WindowAdapter(){
+        	@Override
+        	public void windowClosing(WindowEvent e){
+        		closing(settingsClosed); 
+        	}
+        });
     }
 
 
@@ -46,9 +54,16 @@ public class Settings extends JDialog {
         setPreferredSize(new Dimension(400, 400));
         setLocationRelativeTo(parent);
         setBackground(Setup.getColor(VisualType.BACKGROUND));
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         pack();
         setVisible(true);
     }
+    
+    private void closing(Runnable settingsClosed){
+    	settingsClosed.run(); 
+    	this.dispose();
+    }
+    
+    
 
 }

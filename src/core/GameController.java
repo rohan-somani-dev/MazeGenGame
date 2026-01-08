@@ -78,7 +78,7 @@ public class GameController implements UpdateListener {
      */
     private void onFinished() {
         mazeFinished = true;
-        player = new Player(grid.start);
+        player = new Player(grid.START);
         grid.initPlayer(player);
         UI.update(Setup.MAZE_UPDATE);
     }
@@ -115,6 +115,11 @@ public class GameController implements UpdateListener {
         if (key == KeyEvent.VK_Q) {
             UI.exit();
         }
+        if (KeyEvent.VK_0 <= key && key <= KeyEvent.VK_9){
+        	Setup.setTheme((key - '0') - 1); // this works because the KeyEvent.NUM is equivelant to the ascii values. 
+        	UI.update(); 
+        }
+        
         if (key == KeyEvent.VK_HOME) {
             new Thread(() -> {
                 Scanner input = new Scanner(System.in);
@@ -135,6 +140,8 @@ public class GameController implements UpdateListener {
 
         if (key == KeyEvent.VK_SPACE) {
 //            TODO: set start to player pos, make the path generate from there; allow player to regen path as much as they want
+        	grid.pathStart = player.position; 
+        	System.out.println("drawing path"); 
             new Thread(grid::GreedyBFS).start();
         }
 
