@@ -1,4 +1,49 @@
-# MazeGenGame
 
-THIS IS STILL A FILE <br>
-This helped so much: <a href="https://youtu.be/wq9SJb8VeyM">Java Enums Explained in 6 Minutes</a> Enums are so confusing, But unfortunately useful. 
+# Maze Upgrade Game
+
+## About
+
+This is a maze upgrade game that is full of procedurally generated mazes.  
+If you'd like to run it right away and read through this later, see [Quick Start](#quick-start)
+
+
+## To Be Added
+
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+a  
+
+
+
+## Known Bugs
+
+## Quick Start
+
+this is a test!!
+
+## How to Play
