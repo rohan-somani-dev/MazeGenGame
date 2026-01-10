@@ -80,7 +80,7 @@ public class NodeDrawer {
         g.setColor(Setup.getColor(VisualType.PLAYER));
         g.fillRoundRect(playerX, playerY, newSize, newSize, Setup.PLAYER_ARC, Setup.PLAYER_ARC);
 
-//        update little face :)
+//        update little eyes :)
         Graphics2D g2 = Setup.prepareGraphics(g);
         g2.setComposite(AlphaComposite.SrcOver); //allow transparency
 

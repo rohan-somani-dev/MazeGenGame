@@ -18,15 +18,16 @@ public enum CellState {
 
     private final VisualType visualType;
 
-    CellState(VisualType visualType){
+    CellState(VisualType visualType) {
         this.visualType = visualType;
     }
 
     /**
      * get the theme color of the enum.
+     *
      * @return the visualType associated with this enum.
      */
-    public VisualType getVisualType(){
+    public VisualType getVisualType() {
         return this.visualType; // again, thanks https://youtu.be/wq9SJb8VeyM
     }
 }

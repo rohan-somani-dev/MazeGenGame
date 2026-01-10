@@ -115,11 +115,11 @@ public class GameController implements UpdateListener {
         if (key == KeyEvent.VK_Q) {
             UI.exit();
         }
-        if (KeyEvent.VK_0 <= key && key <= KeyEvent.VK_9){
-        	Setup.setTheme((key - '0') - 1); // this works because the KeyEvent.NUM is equivelant to the ascii values. 
-        	UI.update(); 
+        if (KeyEvent.VK_0 <= key && key <= KeyEvent.VK_9) {
+            Setup.setTheme((key - '0') - 1); // this works because the KeyEvent.NUM is equivelant to the ascii values.
+            UI.update();
         }
-        
+
         if (key == KeyEvent.VK_HOME) {
             System.out.println("SAVE A THEME?");
             new Thread(() -> {
@@ -140,9 +140,7 @@ public class GameController implements UpdateListener {
         }
 
         if (key == KeyEvent.VK_SPACE) {
-//            TODO: set start to player pos, make the path generate from there; allow player to regen path as much as they want
-        	grid.pathStart = player.position; 
-        	System.out.println("drawing path"); 
+            grid.pathStart = player.position;
             new Thread(grid::GreedyBFS).start();
         }
 

@@ -21,7 +21,7 @@ public class ImageUtils {
     /**
      * recolor an icon using its alpha mask to prevent hard lines from antialiasing.
      *
-     * @param icon     the icon to be recolored
+     * @param image    the image to be recolored
      * @param newColor the new color for the icon to be set to
      * @return the recolored icon.
      */
@@ -44,6 +44,7 @@ public class ImageUtils {
         return recolored;
     }
 
+    @SuppressWarnings("ExtractMethodRecommender")
     public static BufferedImage tint(BufferedImage image, Color tintColor) {
 //        BufferedImage tinted = new BufferedImage();
         int width = image.getWidth(null);
@@ -55,14 +56,16 @@ public class ImageUtils {
             for (int y = 0; y < height; y++) {
                 int current = image.getRGB(x, y);
 
-                // ints in java are 32 bits (4 bytes). colors returned from get rgb return a 32 bit int
-                // AAAAAAAA RRRRRRRR GGGGGGGG BBBBBBBB
-                // the first bit shift (>>24) moves the first byte to the least significant position,
-                // allowing us to mask it with 0xFF removing any bytes preceding it, isolating the channel
-                // which is in this case alpha.
-                // repeat for all other shifts with 16, 8,
-                // and finally 0, because the blue channel is already in the least significant bit so no shifting is needed.
-                // note that we still mask, however, because otherwise int b would be the whole 32 bits which is not what we want.
+                /*
+                 ints in java are 32 bits (4 bytes). colors returned from get rgb return a 32 bit int
+                 AAAAAAAA RRRRRRRR GGGGGGGG BBBBBBBB
+                 the first bit shift (>>24) moves the first byte to the least significant position,
+                 allowing us to mask it with 0xFF removing any bytes preceding it, isolating the channel
+                 which is in this case alpha.
+                 repeat for all other shifts with 16, 8,
+                 and finally 0, because the blue channel is already in the least significant bit so no shifting is needed.
+                 note that we still mask, however, because otherwise int b would be the whole 32 bits which is not what we want.
+                */
 
                 int a = (current >> 24) & 0xFF; //most significant byte
                 int r = (current >> 16) & 0xFF;
@@ -73,16 +76,15 @@ public class ImageUtils {
                 int newG = (g * tintColor.getGreen()) / 255;
                 int newB = (b * tintColor.getBlue()) / 255;
 
-                // finally, after doing the recalculations (see: )
-                // we can shift them back int to the new 32 bit int the same way we got them out.
-                // notice we're using bitwise | (or) instead of & (and) so that the channels get added
-//              // rather than masking each other.
+                /*
+                 finally, after doing the recalculations
+                 we can shift them back int to the new 32 bit int the same way we got them out.
+                 notice we're using bitwise | (or) instead of & (and) so that the channels get added
+                 rather than masking each other.
+                */
 
                 int out =
-                        (a << 24) |
-                                (newR << 16) |
-                                (newG << 8) |
-                                (newB);
+                        getColorInt(a, newR, newG, newB);
                 tinted.setRGB(x, y, out);
 
                 //tldr: fancy bit shifting, image multiplication, leave us with a tinted image.
@@ -91,6 +93,13 @@ public class ImageUtils {
         }
 
         return tinted;
+    }
+
+    private static int getColorInt(int alpha, int newR, int newG, int newB) {
+        return (alpha << 24) |
+                (newR << 16) |
+                (newG << 8) |
+                newB;
     }
 
     /**

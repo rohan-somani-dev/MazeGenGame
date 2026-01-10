@@ -21,13 +21,12 @@ public class StyledIconButton extends JButton implements Renderable {
     /**
      * initialize a button with a string to the icon and the color for it to be recolored to.
      *
-     * @param iconPath the path to the icon to be set as the button label
+     * @param iconPath   the path to the icon to be set as the button label
      * @param visualType new color type for it to be changed to.
      */
     public StyledIconButton(String iconPath, VisualType visualType) {
         this(new ImageIcon(iconPath), visualType);
     }
-
 
     /**
      * initialize a button with an icon as its label.
@@ -70,7 +69,7 @@ public class StyledIconButton extends JButton implements Renderable {
      * recolor the current icon.
      *
      * @post icon is recolored to match the (possibly) new themes wallColor
-     *         todo maybe think about only calling when theme is updated? seems to not impact performance a whole lot.
+     *                 todo maybe think about only calling when theme is updated? seems to not impact performance a whole lot.
      */
     public void recolor() {
 
@@ -81,7 +80,6 @@ public class StyledIconButton extends JButton implements Renderable {
         Graphics2D g2 = Setup.prepareGraphics(buffered.createGraphics());
         g2.drawImage(icon, 0, 0, null);
         g2.dispose();
-
 
         BufferedImage recolored = ImageUtils.recolorImage(buffered, Setup.getColor(this.themeColorType));
         setIcon(new ImageIcon(recolored));

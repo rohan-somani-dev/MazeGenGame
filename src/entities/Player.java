@@ -12,6 +12,7 @@ public class Player implements Updater {
 
     /**
      * initialize the player
+     *
      * @param start the start node
      * @pre start is not null
      * @post an initialized player with a node declared as its start

@@ -8,8 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.FileNotFoundException;
-import java.util.Set;
 
 //TODO split settings into ui and logic
 
@@ -28,7 +26,8 @@ public class Settings extends JDialog {
     /**
      * initialize a settings dialog with a dropdown for theme selection and other options (?)
      * TODO fix styling cuz wtf is going on
-     * @param parent the parent of the dialog for it to be anchored to.
+     *
+     * @param parent        the parent of the dialog for it to be anchored to.
      * @param requestUpdate the function to call when an update has been made.
      */
     public Settings(Window parent, Runnable requestUpdate, Runnable settingsClosed) {
@@ -39,14 +38,13 @@ public class Settings extends JDialog {
         setupDialog();
         ThemeDropDown themeChooser = new ThemeDropDown(requestUpdate);
         add(themeChooser);
-        this.addWindowListener(new WindowAdapter(){
-        	@Override
-        	public void windowClosing(WindowEvent e){
-        		closing(settingsClosed); 
-        	}
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                closing(settingsClosed);
+            }
         });
     }
-
 
     private void setupDialog() {
         setAlwaysOnTop(true);
@@ -58,12 +56,10 @@ public class Settings extends JDialog {
         pack();
         setVisible(true);
     }
-    
-    private void closing(Runnable settingsClosed){
-    	settingsClosed.run(); 
-    	this.dispose();
+
+    private void closing(Runnable settingsClosed) {
+        settingsClosed.run();
+        this.dispose();
     }
-    
-    
 
 }

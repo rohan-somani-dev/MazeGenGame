@@ -63,7 +63,7 @@ public class UIController extends JFrame {
      * @post JFrame properties initialized, all elements in JFrame, formatted JFrame.
      */
     private void setup() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setFocusable(true);
 
         setLayout(new GridBagLayout());

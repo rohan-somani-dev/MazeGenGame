@@ -1,9 +1,9 @@
 package ui;
 
 import config.Setup;
-import ui.themes.VisualType;
 import core.Grid;
 import core.Node;
+import ui.themes.VisualType;
 import utilities.Renderable;
 
 import javax.swing.*;
@@ -34,10 +34,9 @@ public class GridRenderer extends JPanel implements Renderable {
 
     }
 
-
-
     /**
      * called when the ui needs to be updated, updates all child nodes as well.
+     *
      * @pre initialized, {@link Grid#nodes} should be able to be read from.
      * @post maze screen is redrawn with updates node states and walls.
      */
@@ -48,6 +47,7 @@ public class GridRenderer extends JPanel implements Renderable {
 
     /**
      * get the JComponent of self, which is a JPanel.
+     *
      * @return this, essentially just passing JPanel self on so the static typing works. don't you just LOOOOVE java??
      */
     @Override
@@ -57,9 +57,10 @@ public class GridRenderer extends JPanel implements Renderable {
 
     /**
      * paint every node in the grid, calculate nodeSize dynamically.
+     *
+     * @param g the {@link Graphics} object to protect
      * @pre grid initialized, every node has some base state.
      * @post JPanel is drawn onto with the nodes and walls.
-     * @param g the {@link Graphics} object to protect
      */
     @Override
     public void paintComponent(Graphics g) {
@@ -89,7 +90,7 @@ public class GridRenderer extends JPanel implements Renderable {
     }
 
     @Override
-    public Dimension getPreferredSize(){
+    public Dimension getPreferredSize() {
         int size = Math.min(getParent().getWidth(), getParent().getHeight());
         return new Dimension(size, size);
     }

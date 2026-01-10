@@ -1,10 +1,11 @@
 package core;
 
-
 import config.Setup;
 import utilities.CellState;
 
-/** Node class, implementing comparable for sorting of the priority queue in pathfinding.
+/**
+ * Node class, implementing comparable for sorting of the priority queue in pathfinding.
+ *
  * @author RohanSomani
  * @name core.Node
  * @date 2025-12-10
@@ -40,6 +41,7 @@ public class Node implements Comparable<Node> {
 
     /**
      * initialize node, setting base state to background.
+     *
      * @param indexX also known as index i.
      * @param indexY also known as index j.
      */
@@ -51,11 +53,12 @@ public class Node implements Comparable<Node> {
 
     /**
      * Determine if a node can walk between two nodes.
-     * @pre nonnull nodes, not necessarily neighbours.
-     * @post determine if the nodes are walkable, false if there's a wall between them.
+     *
      * @param a the first node
      * @param b the second node
      * @return a boolean stating true if the nodes can be walked between.
+     * @pre nonnull nodes, not necessarily neighbours.
+     * @post determine if the nodes are walkable, false if there's a wall between them.
      */
     static boolean canWalk(Node a, Node b) {
         int deltaX = a.indexX - b.indexX;
@@ -66,14 +69,18 @@ public class Node implements Comparable<Node> {
         return deltaY != 1 || (!a.checkWall(Setup.UP) && !b.checkWall(Setup.DOWN));
     }
 
-    /** get the base state of a node.
+    /**
+     * get the base state of a node.
+     *
      * @return the current baseState of the node.
      */
     public CellState getBaseState() {
         return baseState;
     }
 
-    /** set the base state of a node.
+    /**
+     * set the base state of a node.
+     *
      * @param newBaseState the new state to be set.
      */
     public void setBaseState(CellState newBaseState) {
@@ -82,6 +89,7 @@ public class Node implements Comparable<Node> {
 
     /**
      * Set the overlay state of the node.
+     *
      * @param newState the new overlay state to be set.
      */
     public void setOverlayState(CellState newState) {
@@ -90,9 +98,10 @@ public class Node implements Comparable<Node> {
 
     /**
      * get the current state of the node.
+     *
+     * @return the current highest priority state of the node. COULD BE NULL.
      * @pre either baseState or overlayState should be nonnull
      * @post the overlay state is returned if it exists, else the baseState;
-     * @return the current highest priority state of the node. COULD BE NULL.
      */
     public CellState getState() {
         if (overlayState != null) return overlayState;
@@ -101,10 +110,11 @@ public class Node implements Comparable<Node> {
 
     /**
      * get the <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">manhattan distance</a> between two nodes.
-     * @pre nodes indices are defined, other nodes indices are defined.
-     * @post the manhattan distance between the two nodes are returned, always positive, possibly 0.
+     *
      * @param other the node to be compared against.
      * @return the number of orthogonal steps it takes to get from {@code this} to {@code other}.
+     * @pre nodes indices are defined, other nodes indices are defined.
+     * @post the manhattan distance between the two nodes are returned, always positive, possibly 0.
      */
     public int getManhattanDistance(Node other) {
         return Math.abs(other.indexX - indexX) + Math.abs(other.indexY - indexY);
@@ -119,6 +129,7 @@ public class Node implements Comparable<Node> {
 
     /**
      * check if there is a wall in the specified direction.
+     *
      * @param wall the wall to be checked against, from {@link config.Setup}
      * @return true if there is a wall, false if not.
      */
@@ -136,11 +147,12 @@ public class Node implements Comparable<Node> {
 
     /**
      * remove direction in direction
+     *
+     * @param direction the direction from {@link Setup} ie {@code Setup.UP}
      * @pre walls initialized, doesn't have to be a wall in specified direction.
      * @post wall in the direction given is removed.
-     * @param direction the direction from {@link Setup} ie {@code Setup.UP}
      */
-    public void removeWall(int direction){
+    public void removeWall(int direction) {
         this.walls &= ~direction;
     }
 
