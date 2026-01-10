@@ -89,7 +89,7 @@ List of known bugs as of January 9th, 2026.
 
 ### Easy Option
 
-Download `MazeGenGame-0.3.0-MILESTONE.jar` and the `resources/` folder.  
+Download `MazeGenGame-0.3.0-MILESTONE.jar` and the `resources/` folder from releases (packaged as a .zip) 
 Double click the MazeGenGame-0.3.0-MILESTONE.jar file. Enjoy!  
 The jar will **ONLY** run if resources is in the same folder. Working on a fix. As we speak.
 
