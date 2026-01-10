@@ -121,6 +121,7 @@ public class GameController implements UpdateListener {
         }
         
         if (key == KeyEvent.VK_HOME) {
+            System.out.println("SAVE A THEME?");
             new Thread(() -> {
                 Scanner input = new Scanner(System.in);
                 System.out.print("Enter the name of the theme file to be written to: ");
