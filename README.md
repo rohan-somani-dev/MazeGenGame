@@ -77,9 +77,10 @@ If you'd like to run it right away and read through this later, see <a href="#qu
 
 ## Known Bugs
 
-List of known bugs as of January 9th, 2026.
+List of known bugs as of January 12th, 2026.
 
 * Player disappearing on path draw
+* Path Generation breaking when player is standing on the end node.  
 * Jar file only running when it can see `resources/`
 * None more! Let me know if you see anything :)
 
