@@ -32,12 +32,12 @@ public class Settings extends JDialog {
      */
     public Settings(Window parent, Runnable requestUpdate, Runnable settingsClosed) {
         super(parent, "Settings");
-
+        setLayout(new BorderLayout());
         this.parent = parent;
         this.requestUpdate = requestUpdate;
         setupDialog();
         ThemeDropDown themeChooser = new ThemeDropDown(requestUpdate);
-        add(themeChooser);
+        add(themeChooser, BorderLayout.CENTER);
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {

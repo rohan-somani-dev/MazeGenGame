@@ -37,7 +37,13 @@ public class Menu extends JPanel implements Renderable {
         buttonHolder.setOpaque(false);
         buttonHolder.setLayout(new BoxLayout(buttonHolder, BoxLayout.Y_AXIS));
 
-        buttonHolder.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        buttonHolder.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        StyledIconButton exitButton = new StyledIconButton("resources/icons/exit.png", VisualType.WALL); 
+        exitButton.addActionListener(e -> controller.exit());
+
+        buttonHolder.add(exitButton);
+        buttonHolder.add(Box.createVerticalStrut(8));
 
         StyledIconButton settingsButton = new StyledIconButton("resources/icons/gears.png", VisualType.WALL);
         settingsButton.addActionListener(e -> launchSettings());
