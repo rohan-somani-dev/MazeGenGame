@@ -42,7 +42,7 @@ public class Setup {
     public static final int RIGHT = 0b0010;
     public static final int DOWN = 0b0100;
     public static final int LEFT = 0b1000;
-    public static final int GRID_SIZE = 15;
+    public static final int GRID_SIZE = 5;
     public static final int MAZE_MIN_SIZE = 500;
     public static final int MAZE_SIZE = 1300;
     public static final int PADDING = 150;
@@ -58,15 +58,12 @@ public class Setup {
             "<li>Use numbers 1-5 to pick your theme! (You can also do this in settings)</li>" +
             "<li>That's it for now! Please enjoy my game :)</li>" +
             "</ul></html>";
-    @SuppressWarnings("CanBeFinal")
     public static HashMap<String, Theme> themes = new LinkedHashMap<>(); // linked hashmap maintains insertion order,
     // ensuring that getting a theme by index will be consistent
     public static Theme currentTheme;
     public static Theme defaultTheme;
-    public static int mazeSleepTime = 1;
-    @SuppressWarnings("CanBeFinal")
+    public static int mazeSleepTime = 3;
     public static int pathSleepTime = 3;
-    @SuppressWarnings("CanBeFinal")
     public static int sleepTimeBetweenPathRetrace = 5;
 
     static {
@@ -160,10 +157,6 @@ public class Setup {
         return currentTheme.get(c);
     }
 
-    /**
-     * Get a map of the current themes.
-     * @return a hashmap containing all the current themes.
-     */
     public static HashMap<String, Theme> getThemes() {
         regenThemes(false);
         return themes;
@@ -206,23 +199,12 @@ public class Setup {
         currentTheme = themes.getOrDefault(themeName, defaultTheme);
     }
 
-    /**
-     * Set the current theme to index i in the themes
-     * @pre themes map initialized.
-     * @post current theme is update to reflect the index chosen.
-     * @param i the index of the theme to be set to.
-     */
     public static void setTheme(int i) {
         String[] themeNames = Setup.getThemeNames();
         if (i >= themeNames.length) return;
         Setup.setTheme(themeNames[i]);
     }
 
-    /**
-     * prepare a custom graphics object to be used for redrawing, scaling, etc.
-     * @param g the graphics object to be set up.
-     * @return a set-up graphics 2d object, ready to be used.
-     */
     public static Graphics2D prepareGraphics(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

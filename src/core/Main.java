@@ -22,7 +22,6 @@ public class Main {
     public static void main(String[] unused) {
         System.out.println(new File(".").getAbsolutePath());
         GameController gc = new GameController();
-        gc.startMazeGen();
     }
 
 }

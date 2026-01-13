@@ -34,7 +34,7 @@ public class Node implements Comparable<Node> {
     boolean pathVisited;
     @SuppressWarnings("unused")
     boolean onPath;
-    Node parent;
+    public Node parent;
 
     private CellState overlayState;
     private CellState baseState;
@@ -95,6 +95,11 @@ public class Node implements Comparable<Node> {
     public void setOverlayState(CellState newState) {
         this.overlayState = newState;
     }
+    
+    public void setOverlayState(CellState newState, boolean overridePlayer) {
+        if (overridePlayer) setOverlayState(newState); 
+        else if (getState() != CellState.PLAYER) setOverlayState(newState); 
+    }
 
     /**
      * get the current state of the node.
@@ -144,6 +149,10 @@ public class Node implements Comparable<Node> {
     public void clearOverlay() {
         this.setOverlayState(null);
     }
+    
+    public void clearOverlay(boolean clearIfPlayer){
+    	if (clearIfPlayer || getState() != CellState.PLAYER) clearOverlay();
+    }
 
     /**
      * remove direction in direction
@@ -155,5 +164,9 @@ public class Node implements Comparable<Node> {
     public void removeWall(int direction) {
         this.walls &= ~direction;
     }
+
+	public void resetWalls() {
+		this.walls = 0b1111;
+	}
 
 }

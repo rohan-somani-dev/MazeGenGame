@@ -39,6 +39,8 @@ public class GameController implements UpdateListener {
         UI = new UIController(grid);
 
         setupInput();
+        grid.startMazeGen();
+        onFinished();
     }
 
     /**
@@ -56,19 +58,7 @@ public class GameController implements UpdateListener {
         });
     }
 
-    /**
-     * start the maze generation in a new thread
-     *
-     * @pre grid exists in context, and can generate a maze
-     * @post calls the maze generation algorithm and then calls {@link GameController#onFinished()}
-     */
-    void startMazeGen() {
-        Thread mazeThread = new Thread(() -> {
-            handleMazeGen();
-            onFinished();
-        });
-        mazeThread.start();
-    }
+    
 
     /**
      * Called when the maze generation is finished.
@@ -78,28 +68,13 @@ public class GameController implements UpdateListener {
      */
     private void onFinished() {
         mazeFinished = true;
-        player = new Player(grid.START);
+        player = new Player(grid.start);
         grid.initPlayer(player);
         UI.update(Setup.MAZE_UPDATE);
     }
 
-    /**
-     * Start the maze generation, handle any errors with animation
-     * if errors, defaults to no animation and prints to console.
-     *
-     * @pre grid, exists, and can be referenced.
-     * @post maze started generating.
-     */
-    void handleMazeGen() {
-        int result = grid.genMaze();
-        if (result == Setup.INTERRUPTED_ERROR) {
-            System.out.println("UNABLE TO ANIMATE. DEFAULTING TO NO ANIMATION");
-            Setup.mazeSleepTime = 0;
-            handleMazeGen();
-        } else if (result != 0) {
-            Setup.handleError(new InterruptedException("Maze Gen error"));
-        }
-    }
+
+
 
     /**
      * handles the input. checks if the input is in list of player movements ({@link Setup#KEY_BINDINGS}) and if not

@@ -37,12 +37,17 @@ public class NodeDrawer {
         int x = n.indexX * size;
         int y = n.indexY * size;
 
-        if (state == CellState.PLAYER) {
+        switch (state){
+        case PLAYER:
             drawPlayer(n, x, y, size, g2);
-        } else {
-            g2.fillRect(x, y, size, size);
+            break;
+        case PATH:
+        	drawPath(n, x, y, size, g2); 
+        	break;
+        default:
+        	g2.fillRect(x, y, size, size);
+        	break;
         }
-
         drawWalls(g2, n, size, isLastRow, isLastCol, x, y);
 
     }
@@ -53,6 +58,18 @@ public class NodeDrawer {
         if (n.checkWall(Setup.LEFT) || n.indexX == 0) g.drawLine(x, y, x, y + size);
         if (n.checkWall(Setup.DOWN) || isLastCol) g.drawLine(x, y + size - 1, x + size - 1, y + size - 1);
         if (n.checkWall(Setup.RIGHT) || isLastRow) g.drawLine(x + size - 1, y, x + size - 1, y + size - 1);
+    }
+    
+    private static void drawPath(Node n, int x, int y, int size, Graphics2D g){
+    	System.out.println("drawing path");
+    	CellState base = n.getBaseState();
+    	Color baseC = Setup.getColor(base.getVisualType());
+    	g.setColor(baseC);
+    	g.fillRect(x,  y,  size,  size);
+    	
+    	Color overColor = Setup.getColor(VisualType.PATH);
+    	g.setColor(overColor);
+    	g.fillRect(x + 10, y + 10, size - 20, size - 20);
     }
 
     private static void drawPlayer(Node n, int x, int y, int size, Graphics2D g) {
