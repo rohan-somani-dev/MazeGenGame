@@ -122,6 +122,8 @@ See [How to Play](#how-to-play) for instructions.
 * Use WASD or the arrow keys to move. You cannot, (or at least shouldn't be able to) move through walls.
 * If you're stuck, use space to generate the fastest path to the end.
 * Use numbers 1-5 to pick your theme! (You can also do this in settings)
+* Q to quit
+* F or Escape to toggle fullscreen. 
 * That's it for now! Please enjoy my game :)
 
 ## Implementation
