@@ -34,7 +34,7 @@ public class Setup {
     public static final int THEME_NOT_FOUND_ERROR = -1;
     public static final int PLAYER_ARC = 25;
     // player settings
-    public static final int PLAYER_SHRINK = 7;
+    public static final float PLAYER_SHRINK = 0.9f;
     public static final Map<Integer, Player.Direction> KEY_BINDINGS = new HashMap<>();
     public static final BufferedImage SMILE;
     // constants
@@ -56,6 +56,7 @@ public class Setup {
             "<li>Use WASD or the arrow keys to move. You cannot, (or at least shouldn't be able to) move through walls.</li>" +
             "<li>If you're stuck, use space to generate the fastest path to the end.</li>" +
             "<li>Use numbers 1-5 to pick your theme! (You can also do this in settings)</li>" +
+            "<li>Press Q to quit.</li>" +
             "<li>That's it for now! Please enjoy my game :)</li>" +
             "</ul></html>";
     public static HashMap<String, Theme> themes = new LinkedHashMap<>(); // linked hashmap maintains insertion order,
@@ -65,6 +66,9 @@ public class Setup {
     public static int mazeSleepTime = 3;
     public static int pathSleepTime = 3;
     public static int sleepTimeBetweenPathRetrace = 5;
+    
+    public static final Dimension SCREEN_SIZE;
+	public static final float IMAGE_SCALE = 0.7f; 
 
     static {
 
@@ -90,6 +94,8 @@ public class Setup {
         SMILE = img;
 
         initThemes();
+        
+        SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
     }
 
     private Setup() {

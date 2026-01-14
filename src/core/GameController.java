@@ -42,6 +42,7 @@ public class GameController implements UpdateListener {
     setupInput();
     grid.startMazeGen();
     onFinished();
+    
   }
 
   /**
@@ -112,7 +113,7 @@ public class GameController implements UpdateListener {
 
     Player.Direction move = Setup.KEY_BINDINGS.getOrDefault(key, null);
     if (move != null) {
-      if (grid.movePlayer(player, move)) {
+      if (grid.movePlayer(move)) {
         UI.update(Setup.MAZE_UPDATE);
       }
     }

@@ -128,6 +128,12 @@ public class UIController extends JFrame {
     dispose(); //same as above
     setUndecorated(false);
     setExtendedState(JFrame.NORMAL);
+    
+    setSize(new Dimension(
+    		Setup.SCREEN_SIZE.width - 300, 
+    		Setup.SCREEN_SIZE.height - 200
+    		));
+    setLocationRelativeTo(null);
     setVisible(true);
   }
 
