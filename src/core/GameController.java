@@ -110,7 +110,7 @@ public class GameController implements UpdateListener {
 
     if (!mazeFinished)
       return;
-
+    //TODO freeze player movement when maze is regenerating 
     Player.Direction move = Setup.KEY_BINDINGS.getOrDefault(key, null);
     if (move != null) {
       if (grid.movePlayer(move)) {

@@ -162,7 +162,6 @@ public class GridRenderer extends JPanel implements Renderable {
       int x = n.indexX * size;
       int y = n.indexY * size;
       g2.setColor(c);
-      // g2.fillRect(x + 10, y + 10, size - 20, size - 20);
       h += hueInc;
 
       if (prevX != -1 && prevY != -1) {

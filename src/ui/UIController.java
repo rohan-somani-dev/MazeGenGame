@@ -76,7 +76,7 @@ public class UIController extends JFrame {
         exit();
       }
     });
-    setFocusable(true);
+
 
     setLayout(new GridBagLayout());
 
@@ -108,6 +108,13 @@ public class UIController extends JFrame {
     setLocationRelativeTo(null);
     enterFullscreen();
     setVisible(true);
+    setFocusable(true);
+    
+    setAlwaysOnTop(true);
+    toFront();
+    requestFocus();
+    setAlwaysOnTop(false); //get it to appear on top on start. 
+
     update();
   }
 
