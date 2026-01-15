@@ -119,8 +119,7 @@ public class GameController implements UpdateListener {
     }
 
     if (key == KeyEvent.VK_SPACE) {
-      grid.pathStart = player.position;
-      new Thread(grid::GreedyBFS).start();
+      new Thread(grid::startPathGen).start();
     }
 
   }

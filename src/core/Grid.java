@@ -8,9 +8,7 @@ import utilities.SoundType;
 import utilities.Updater;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.Random;
 import java.util.Stack;
 
@@ -36,7 +34,8 @@ public class Grid implements Updater {
 
   private ArrayList<Node> path = null;
 
-  public Player player = null; 
+  public Player player = null;
+
   /**
    * Initialize grid.
    *
@@ -72,7 +71,7 @@ public class Grid implements Updater {
     clearPathStates();
     start = playerPos;
     playerPos.setBaseState(CellState.START);
-    path = null; 
+    path = null;
   }
 
   public void startMazeGen() {
@@ -288,44 +287,12 @@ public class Grid implements Updater {
     return neighbours;
   }
 
-  /**
-   * Pathfind using GreedyBFS; notify when finished.
-   *
-   * @pre established maze; must be path from start to end.
-   * @post every node on the shortest path gets a parent assigned to them,
-   *       pointing to the previous node in the path
-   */
-  public void GreedyBFS() {
+  public void startPathGen() {
+    pathStart = player.position;
     clearPathStates();
-    pathStart.pathVisited = true;
-    PriorityQueue<Node> queue = new PriorityQueue<>(
-        (a, b) -> Integer.compare(a.getManhattanDistance(end), b.getManhattanDistance(end)));
-    queue.add(pathStart);
-
-    while (!queue.isEmpty()) {
-      Node curr = queue.poll();
-      ArrayList<Node> neighbours = getNeighbours(curr);
-      if (neighbours == null)
-        continue;
-      for (Node neighbour : neighbours) {
-        if (!neighbour.pathVisited && Node.canWalk(curr, neighbour)) {
-          // set the parent to the current node, so that no matter
-          // whether it's on the path the parent can be found
-          neighbour.parent = curr;
-
-          neighbour.pathVisited = true;
-          queue.add(neighbour);
-          if (neighbour.getBaseState() == CellState.END) {
-            // the first time we find the end it's guaranteed to be
-            // the shortest path since we always move towards it
-            pathFound();
-            return;
-          }
-        }
-
-      }
-    }
-
+    path = Pathfinding.findPathBest(this, pathStart, end);
+    System.out.println(path == null);
+    notifyListeners();
   }
 
   public void clearPathStates() {
@@ -338,24 +305,7 @@ public class Grid implements Updater {
     clearAllOverlays();
   }
 
-  /**
-   * To be called when the path is found.
-   *
-   * @pre nodes have parents assigned to them based on the path
-   * @post nodes gain property {@link Node#onPath} if on the path.
-   */
-  void pathFound() {
-    clearAllOverlays();
-    ArrayList<Node> path = new ArrayList<>();  
-    Node pathNode = end;
-    while (pathNode != null) {
-      path.add(pathNode); 
-      pathNode.onPath = true;
-      pathNode = pathNode.parent;
-    }
-    this.path = path; 
-    notifyListeners();
-  }
+  
 
   /**
    * initialize the player.
@@ -367,7 +317,7 @@ public class Grid implements Updater {
    * @post player initialized, node at player position set to player.
    */
   void initPlayer(Player player) {
-    this.player = player; 
+    this.player = player;
   }
 
   /**
@@ -443,9 +393,9 @@ public class Grid implements Updater {
     resetMaze();
     startMazeGen();
 
-  } 
+  }
 
-  public ArrayList<Node> getPath(){
+  public ArrayList<Node> getPath() {
     return this.path;
   }
 

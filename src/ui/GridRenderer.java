@@ -127,26 +127,26 @@ public class GridRenderer extends JPanel implements Renderable {
     g2.setColor(Setup.getColor(VisualType.PLAYER));
     g2.fillRoundRect(playerX, playerY, newSize, newSize, Setup.PLAYER_ARC, Setup.PLAYER_ARC);
 
-    // update little eyes :)
-    g2.setComposite(AlphaComposite.SrcOver); // allow transparency
-
-    Image smileRecolored = ImageUtils.tint(Setup.SMILE, Setup.getColor(VisualType.WALL).brighter());
-
-    int newImageSize = (int) (size * Setup.IMAGE_SCALE);
-    int imageOffset = (size - newImageSize) / 2;
-
-    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-    smileRecolored = smileRecolored.getScaledInstance(newImageSize, newImageSize, Image.SCALE_SMOOTH);
-    g2.drawImage(
-        smileRecolored,
-        x + imageOffset,
-        y + imageOffset,
-        newImageSize,
-        newImageSize,
-        null);
-
-    g2.dispose();
-
+    // // update little eyes :)
+    // g2.setComposite(AlphaComposite.SrcOver); // allow transparency
+    //
+    // Image smileRecolored = ImageUtils.tint(Setup.SMILE, Setup.getColor(VisualType.WALL).brighter());
+    //
+    // int newImageSize = (int) (size * Setup.IMAGE_SCALE);
+    // int imageOffset = (size - newImageSize) / 2;
+    //
+    // g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    // smileRecolored = smileRecolored.getScaledInstance(newImageSize, newImageSize, Image.SCALE_SMOOTH);
+    // g2.drawImage(
+    //     smileRecolored,
+    //     x + imageOffset,
+    //     y + imageOffset,
+    //     newImageSize,
+    //     newImageSize,
+    //     null);
+    //
+    // g2.dispose();
+    //
   }
 
   private void drawPath(Graphics2D g2, ArrayList<Node> path, int size) {

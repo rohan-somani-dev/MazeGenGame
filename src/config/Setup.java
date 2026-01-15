@@ -44,7 +44,7 @@ public class Setup {
     public static final int RIGHT = 0b0010;
     public static final int DOWN = 0b0100;
     public static final int LEFT = 0b1000;
-    public static final int GRID_SIZE = 15;
+    public static final int GRID_SIZE = 10;
     public static final int MAZE_MIN_SIZE = 500;
     public static final int MAZE_SIZE = 1300;
     public static final int PADDING = 150;
@@ -62,9 +62,9 @@ public class Setup {
     // ensuring that getting a theme by index will be consistent
     public static Theme currentTheme;
     public static Theme defaultTheme;
-    public static int mazeSleepTime = 3;
-    public static int pathSleepTime = 3;
-    public static int sleepTimeBetweenPathRetrace = 5;
+    public static int mazeSleepTime = 0;
+    public static int pathSleepTime = 0;
+    public static int sleepTimeBetweenPathRetrace = 0;
     
     public static final Dimension SCREEN_SIZE;
 	public static final float IMAGE_SCALE = 0.7f; 
