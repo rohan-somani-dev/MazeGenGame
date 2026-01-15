@@ -3,6 +3,8 @@ package config;
 import entities.Player;
 import ui.themes.Theme;
 import ui.themes.VisualType;
+import utilities.FontLoader;
+import utilities.HelpReader;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -52,13 +54,10 @@ public class Setup {
     public static final int BAR_SIZE = 16;
     public static final int STEPS_PER_REDRAW = 1;
     public static final File themeDir = new File("resources/themes");
-    public static final String HELP_MESSAGE = "<html><ul>" +
-            "<li>Use WASD or the arrow keys to move. You cannot, (or at least shouldn't be able to) move through walls.</li>" +
-            "<li>If you're stuck, use space to generate the fastest path to the end.</li>" +
-            "<li>Use numbers 1-5 to pick your theme! (You can also do this in settings)</li>" +
-            "<li>Press Q to quit.</li>" +
-            "<li>That's it for now! Please enjoy my game :)</li>" +
-            "</ul></html>";
+    public static final String HELP_MESSAGE;
+    public static final File HELP_FILE = new File("resources/help.html");
+    public static final String FONTS_PATH = "resources/fonts";
+    
     public static HashMap<String, Theme> themes = new LinkedHashMap<>(); // linked hashmap maintains insertion order,
     // ensuring that getting a theme by index will be consistent
     public static Theme currentTheme;
@@ -69,6 +68,11 @@ public class Setup {
     
     public static final Dimension SCREEN_SIZE;
 	public static final float IMAGE_SCALE = 0.7f; 
+	public static final int PATH_WIDTH; 
+	
+	//FONTS
+	public static final Font REGULAR; 
+	
 
     static {
 
@@ -96,6 +100,12 @@ public class Setup {
         initThemes();
         
         SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
+        PATH_WIDTH = Math.min(5,  SCREEN_SIZE.width / 400); 
+        
+        HELP_MESSAGE = HelpReader.readHelp();
+        
+        FontLoader.loadFonts();
+        REGULAR = new Font("NunitoSans", Font.PLAIN, 18); 
     }
 
     private Setup() {

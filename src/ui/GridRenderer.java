@@ -152,7 +152,7 @@ public class GridRenderer extends JPanel implements Renderable {
   private void drawPath(Graphics2D g2, ArrayList<Node> path, int size) {
 
     int length = path.size();
-    float hueInc = 1f / length;
+    float hueInc = 2f / length;
     float h = 0f, s = 0.5f, v = 1f;
     Color c;
     int prevX = -1;
@@ -165,13 +165,13 @@ public class GridRenderer extends JPanel implements Renderable {
       h += hueInc;
 
       if (prevX != -1 && prevY != -1) {
-        g2.setStroke(new BasicStroke(10, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
+        g2.setStroke(new BasicStroke(Setup.PATH_WIDTH, BasicStroke.CAP_ROUND, BasicStroke.JOIN_BEVEL));
         g2.drawLine(x + size / 2, y + size / 2, prevX + size / 2, prevY + size / 2);
       }
 
       prevX = x;
       prevY = y;
-    }
+    } 
 
   }
 

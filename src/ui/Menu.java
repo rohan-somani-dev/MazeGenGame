@@ -2,121 +2,132 @@ package ui;
 
 import config.Setup;
 import ui.styled.StyledIconButton;
+import ui.styled.StyledTextButton;
 import ui.themes.VisualType;
+import utilities.ImageUtils;
 import utilities.Renderable;
 
+import javax.imageio.IIOException;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 
 /**
  * @author RohanSomani
- * @name TempUI
+ * @name resizedUI
  * @date 2026-01-02
  */
 public class Menu extends JPanel implements Renderable {
 
-    final JPanel buttonHolder;
-    final UIController controller;
+  final JPanel buttonHolder;
+  final UIController controller;
 
-    private boolean settingsOpen = false;
+  private boolean settingsOpen = false;
+  private boolean helpOpen = false; 
 
-    /**
-     * initialize the right menu, currently settings and info button held on it.
-     *
-     * @param controller the UIController that will be asked to update.
-     */
-    public Menu(UIController controller) {
-        this.controller = controller;
-        setBackground(Setup.getColor(VisualType.BACKGROUND));
+  /**
+   * initialize the right menu, currently settings and info button held on it.
+   *
+   * @param controller
+   *                   the UIController that will be asked to update.
+   */
+  public Menu(UIController controller) {
+    this.controller = controller;
+    setBackground(Setup.getColor(VisualType.BACKGROUND));
 
-        setLayout(new BorderLayout());
+    setLayout(new BorderLayout());
 
-        setFocusable(false);
+    setFocusable(false);
 
-        buttonHolder = new JPanel();
-        buttonHolder.setOpaque(false);
-        buttonHolder.setLayout(new BoxLayout(buttonHolder, BoxLayout.Y_AXIS));
+    buttonHolder = new JPanel();
+    buttonHolder.setOpaque(false);
+    buttonHolder.setLayout(new BoxLayout(buttonHolder, BoxLayout.Y_AXIS));
 
-        buttonHolder.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+    buttonHolder.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        StyledIconButton exitButton = new StyledIconButton("resources/icons/exit.png", VisualType.WALL); 
-        exitButton.addActionListener(e -> controller.exit());
+    StyledIconButton exitButton = new StyledIconButton("resources/icons/exit.png", VisualType.WALL);
+    exitButton.addActionListener(e -> controller.exit());
 
-        buttonHolder.add(exitButton);
-        buttonHolder.add(Box.createVerticalStrut(8));
+    buttonHolder.add(exitButton);
+    buttonHolder.add(Box.createVerticalStrut(8));
 
-        StyledIconButton settingsButton = new StyledIconButton("resources/icons/gears.png", VisualType.WALL);
-        settingsButton.addActionListener(e -> launchSettings());
+    StyledIconButton settingsButton = new StyledIconButton("resources/icons/gears.png", VisualType.WALL);
+    settingsButton.addActionListener(e -> launchSettings());
 
-        buttonHolder.add(settingsButton, BorderLayout.NORTH);
-        buttonHolder.add(Box.createVerticalStrut(8));
+    buttonHolder.add(settingsButton, BorderLayout.NORTH);
+    buttonHolder.add(Box.createVerticalStrut(8));
 
-        StyledIconButton helpButton = new StyledIconButton("resources/icons/info.png", VisualType.WALL);
-        helpButton.addActionListener(e -> launchHelp());
+    StyledIconButton helpButton = new StyledIconButton("resources/icons/info.png", VisualType.WALL);
+    helpButton.addActionListener(e -> launchHelp());
 
-        buttonHolder.add(helpButton, BorderLayout.SOUTH);
+    buttonHolder.add(helpButton, BorderLayout.SOUTH);
+
+    add(buttonHolder, BorderLayout.NORTH);
+  }
+
+  private void launchSettings() {
+    if (settingsOpen)
+      return; // stops the user from opening settings multiple times.
+    settingsOpen = true;
+    new Settings(SwingUtilities.getWindowAncestor(this), // gets the parent
+                                                         // JFrame, the
+                                                         // game.
+        this::onSettingsUpdate, this::onSettingsClosed);
+  }
+
+  private void launchHelp() {
+    if (helpOpen) return; 
+    helpOpen = true;
+    HelpDialog helpDialog = new HelpDialog(SwingUtilities.getWindowAncestor(this), "How to play!") ;
+    helpDialog.addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowClosed(WindowEvent e){
+        helpOpen = false; 
+      }
+    }); 
+  }
 
 
-        add(buttonHolder, BorderLayout.NORTH);
+  private void onSettingsUpdate() {
+    controller.update();
+  }
+
+  private void onSettingsClosed() {
+    settingsOpen = false;
+  }
+
+  /**
+   * function to be called to repaint, can implement other code but mostly
+   * used to call {@code this.repaint()}.
+   *
+   * @pre ready to be drawn.
+   * @post update has taken place, everything that needed to be drawn is
+   *       drawn.
+   */
+  @Override
+  public void onUpdate() {
+    Component[] components = buttonHolder.getComponents();
+    for (Component component : components) {
+      if (!(component instanceof Renderable)) {
+        continue;
+      }
+      Renderable r = (Renderable) component;
+      r.onUpdate();
     }
+    setBackground(Setup.getColor(VisualType.BACKGROUND));
+    repaint();
+  }
 
-    private void launchSettings() {
-        if (settingsOpen) return; //stops the user from opening settings multiple times.
-        settingsOpen = true;
-        new Settings(
-                SwingUtilities.getWindowAncestor(this), //gets the parent JFrame, the game.
-                this::onSettingsUpdate,
-                this::onSettingsClosed
-        );
-    }
-
-    private void launchHelp(){
-        System.out.println(Setup.HELP_MESSAGE);
-        JLabel message = new JLabel(Setup.HELP_MESSAGE);
-        JOptionPane.showMessageDialog(null,
-                message,
-                "How to play!", JOptionPane.INFORMATION_MESSAGE
-        );
-    }
-
-    private void onSettingsUpdate() {
-        controller.update();
-    }
-
-    private void onSettingsClosed() {
-        settingsOpen = false;
-    }
-
-    /**
-     * function to be called to repaint, can implement other code but mostly
-     * used to call {@code this.repaint()}.
-     *
-     * @pre ready to be drawn.
-     * @post update has taken place, everything that needed to be drawn is
-     *         drawn.
-     */
-    @Override
-    public void onUpdate() {
-        Component[] components = buttonHolder.getComponents();
-        for (Component component : components) {
-            if (!(component instanceof Renderable)) {
-                continue;
-            }
-            Renderable r = (Renderable) component;
-            r.onUpdate();
-        }
-        setBackground(Setup.getColor(VisualType.BACKGROUND));
-        repaint();
-    }
-
-    /**
-     * get the underlying component of self.
-     *
-     * @return the component part of the implementing object.
-     */
-    @Override
-    public JComponent getComponent() {
-        return this;
-    }
-    // BEFORE YOU WRITE ANYTHING ADD A DESCRIPTION!!
+  /**
+   * get the underlying component of self.
+   *
+   * @return the component part of the implementing object.
+   */
+  @Override
+  public JComponent getComponent() {
+    return this;
+  }
+  // BEFORE YOU WRITE ANYTHING ADD A DESCRIPTION!!
 }
