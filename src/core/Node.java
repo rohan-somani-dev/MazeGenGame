@@ -179,29 +179,4 @@ public class Node implements Comparable<Node> {
     this.walls = 0b1111;
   }
 
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + indexX;
-    result = prime * result + indexY;
-    return result;
-  } // my ide did this for me.
-  // gotta love modern coding tools.
-  // #neverGoingBack
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass()) // checks if they're both nodes.
-      return false;
-    Node other = (Node) obj;
-    if (indexX != other.indexX || indexY != other.indexY)
-      return false;
-    return true;
-  }
-
 }

@@ -4,6 +4,8 @@ import config.Setup;
 import ui.themes.VisualType;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -194,6 +196,21 @@ public class ImageUtils {
     g.drawImage(curr, 0, 0, targetWidth, targetHeight, null);
     g.dispose();
     return out;
+  }
+  
+  public static ImageIcon setupIcon(String filePath, int targetSize, Color targetColor) {
+	  File selectedFile;  
+	  BufferedImage original; 
+	  try {
+		  selectedFile = new File(filePath);
+		  original = ImageIO.read(selectedFile);
+	  } catch (IOException e) {
+		  Setup.handleError(e);
+		  return null; 
+	  }
+	  BufferedImage resized = resizeImage(original, targetSize, targetSize); 
+	  BufferedImage recolored = recolorImage(resized, targetColor); 
+	  return new ImageIcon(recolored);
   }
 
 }

@@ -14,6 +14,7 @@ import java.util.Set;
 public class Pathfinding {
 
   public static ArrayList<Node> findPathQuick(Grid grid, Node start, Node target) {
+    System.out.println("USING THE WORSE FINDER");
     Set<Node> visited = new HashSet<>();
     PriorityQueue<Node> queue = new PriorityQueue<>(
         (a, b) -> Integer.compare(a.getManhattanDistance(target), b.getManhattanDistance(target)));
@@ -38,10 +39,7 @@ public class Pathfinding {
           queue.add(neighbour);
 
           if (neighbour == target) {
-            System.out.println("TRYING TO RETRACE");
-            ArrayList<Node> out = retrace(parentMap, target);
-            System.out.println("RETRACED");
-            return out;
+            return retrace(parentMap, target);
           }
 
         }
@@ -69,6 +67,7 @@ public class Pathfinding {
    * @return
    */
   public static ArrayList<Node> findPathBest(Grid grid, Node start, Node target) {
+    System.out.println("USING THE BEST FINDER");
 
     HashMap<Node, Node> parentMap = new HashMap<>();
     parentMap.put(start, null);

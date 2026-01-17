@@ -290,8 +290,11 @@ public class Grid implements Updater {
   public void startPathGen() {
     pathStart = player.position;
     clearPathStates();
-    path = Pathfinding.findPathBest(this, pathStart, end);
-    System.out.println(path == null);
+    if (Setup.useAStar) {
+      path = Pathfinding.findPathBest(this, pathStart, end);
+    } else {
+      path = Pathfinding.findPathQuick(this, pathStart, end);
+    }
     notifyListeners();
   }
 
@@ -304,8 +307,6 @@ public class Grid implements Updater {
 
     clearAllOverlays();
   }
-
-  
 
   /**
    * initialize the player.
