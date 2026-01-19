@@ -14,7 +14,6 @@ import java.util.ArrayList;
  *         learned about interfaces from <a href="https://www.youtube.com/@BroCodez">Bro Code</a>
  */
 public interface Updater {
-    ArrayList<UpdateListener> listeners = new ArrayList<>();
 
     /**
      * add a listener to the object.
@@ -23,9 +22,7 @@ public interface Updater {
      * @pre added listener must implement {@link UpdateListener}
      * @post listener is added to list of listeners.
      */
-    default void addListener(UpdateListener listener) {
-        listeners.add(listener);
-    }
+    void addListener(UpdateListener listener);
 
     /**
      * Notify every added listener that there has been an update.
@@ -33,9 +30,6 @@ public interface Updater {
      * @pre None.
      * @post every listener's {@code .onUpdate()} has been called.
      */
-    default void notifyListeners() {
-        for (UpdateListener listener : listeners) {
-            listener.onUpdate(Setup.MAZE_UPDATE);
-        }
-    }
+    void notifyListeners();
+
 }

@@ -2,10 +2,7 @@ package core;
 
 import config.Setup;
 import entities.Player;
-import utilities.CellState;
-import utilities.SoundPlayer;
-import utilities.SoundType;
-import utilities.Updater;
+import utilities.*;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;
@@ -20,7 +17,7 @@ import java.util.Stack;
  * @name core.Grid
  * @date 2025-12-10
  */
-public class Grid implements Updater {
+public class Grid implements Updater, UpdateListener { // 2 for 1 special
   // TODO: serialize, allow to save mazes to file to be opened later.
   // https://www.baeldung.com/java-serialization
   // TODO: outsource pathfinding and maybe maze generation?
@@ -35,6 +32,10 @@ public class Grid implements Updater {
   private ArrayList<Node> path = null;
 
   public Player player = null;
+
+  private final ArrayList<UpdateListener> listeners = new ArrayList<>();
+
+  public TimerController timerController = new TimerController();
 
   /**
    * Initialize grid.
@@ -57,6 +58,8 @@ public class Grid implements Updater {
 
     start = nodes[0][0];
     start.setBaseState(CellState.START);
+    timerController.addListener(this);
+    timerController.startTimer(12);
 
   }
 
@@ -400,4 +403,46 @@ public class Grid implements Updater {
     return this.path;
   }
 
+    /**
+     * add a listener to the object.
+     *
+     * @param listener the listener to be added, implementing UpdateListener.
+     * @pre added listener must implement {@link UpdateListener}
+     * @post listener is added to list of listeners.
+     */
+    @Override
+    public void addListener(UpdateListener listener) {
+       listeners.add(listener);
+    }
+
+    /**
+     * Notify every added listener that there has been an update.
+     *
+     * @pre None.
+     * @post every listener's {@code .onUpdate()} has been called.
+     */
+    @Override
+    public void notifyListeners() {
+        for (UpdateListener listener : listeners){
+            listener.onUpdate(Setup.ALL);
+        }
+    }
+
+    @Override
+    public void onUpdate(int code) {
+        if (code == Setup.TIMER_FINISHED) {
+            handleFailLogic();
+        } else {
+            handleTickLogic();
+        }
+    }
+
+    public void handleFailLogic(){
+        System.out.println("YOU FAILED IDIOT");
+        notifyListeners();
+    }
+
+    public void handleTickLogic(){
+//        notifyListeners();
+    }
 }

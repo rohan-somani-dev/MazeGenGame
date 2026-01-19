@@ -179,8 +179,7 @@ public class ImageUtils {
 
     BufferedImage temp;
 
-
-    //iterative resizing for better smoothing. 
+    // iterative resizing for better smoothing.
     while (width / 2 >= targetWidth && height / 2 >= targetHeight) {
       width /= 2;
       height /= 2;
@@ -197,20 +196,38 @@ public class ImageUtils {
     g.dispose();
     return out;
   }
-  
+
   public static ImageIcon setupIcon(String filePath, int targetSize, Color targetColor) {
-	  File selectedFile;  
-	  BufferedImage original; 
-	  try {
-		  selectedFile = new File(filePath);
-		  original = ImageIO.read(selectedFile);
-	  } catch (IOException e) {
-		  Setup.handleError(e);
-		  return null; 
-	  }
-	  BufferedImage resized = resizeImage(original, targetSize, targetSize); 
-	  BufferedImage recolored = recolorImage(resized, targetColor); 
-	  return new ImageIcon(recolored);
+    File selectedFile;
+    BufferedImage original;
+    try {
+      selectedFile = new File(filePath);
+      original = ImageIO.read(selectedFile);
+    } catch (IOException e) {
+      Setup.handleError(e);
+      return null;
+    }
+    BufferedImage resized = resizeImage(original, targetSize, targetSize);
+    BufferedImage recolored = recolorImage(resized, targetColor);
+    return new ImageIcon(recolored);
+  }
+
+  // https://nicmulvaney.com/easing/#easeInOutCubic
+  private static float cubicEase(float t) {
+    if (t < 0.5f)
+      return 4 * t * t * t;
+    return 1f - (float) Math.pow(-2 * t + 2, 3f) / 2f;
+
+  }
+
+  public static Color cubicEaseColor(Color start, Color end, float t) {
+    t = Math.min(Math.max(0f, t), 1f);
+    t = cubicEase(t);
+    int r = (int) (start.getRed() + t * (end.getRed() - start.getRed()));
+    int g = (int) (start.getGreen() + t * (end.getGreen() - start.getGreen()));
+    int b = (int) (start.getBlue() + t * (end.getBlue() - start.getBlue()));
+
+    return new Color(r, g, b);
   }
 
 }

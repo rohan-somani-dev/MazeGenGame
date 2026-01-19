@@ -13,8 +13,7 @@ public enum CellState {
     TARGET(VisualType.TARGET),
     VISITED(VisualType.VISITED),
     BACKGROUND(VisualType.BACKGROUND),
-    @SuppressWarnings("unused")
-    DEBUG(VisualType.DEBUG);
+    DANGER(VisualType.DANGER);
 
     private final VisualType visualType;
 

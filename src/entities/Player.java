@@ -1,7 +1,11 @@
 package entities;
 
+import config.Setup;
 import core.Node;
+import utilities.UpdateListener;
 import utilities.Updater;
+
+import java.util.ArrayList;
 
 /**
  * Basic player implementation.
@@ -9,6 +13,8 @@ import utilities.Updater;
 public class Player implements Updater {
 
     public Node position;
+
+    private final ArrayList<UpdateListener> listeners = new ArrayList<>();
 
     /**
      * initialize the player
@@ -19,6 +25,31 @@ public class Player implements Updater {
      */
     public Player(Node start) {
         this.position = start;
+    }
+
+    /**
+     * add a listener to the object.
+     *
+     * @param listener the listener to be added, implementing UpdateListener.
+     * @pre added listener must implement {@link UpdateListener}
+     * @post listener is added to list of listeners.
+     */
+    @Override
+    public void addListener(UpdateListener listener) {
+       listeners.add(listener);
+    }
+
+    /**
+     * Notify every added listener that there has been an update.
+     *
+     * @pre None.
+     * @post every listener's {@code .onUpdate()} has been called.
+     */
+    @Override
+    public void notifyListeners() {
+        for (UpdateListener listener : listeners){
+            listener.onUpdate(Setup.ALL);
+        }
     }
 
     /**

@@ -12,5 +12,5 @@ public enum VisualType {
     END,
     PATH,
     PLAYER,
-    DEBUG
+    DANGER
 }

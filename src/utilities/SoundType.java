@@ -8,8 +8,9 @@
 package utilities;
 
 public enum SoundType {
-	PLAYER_WALK,
-	MAZE_FINISHED,
-	POWERUP_OBTAINED,
-	POWERUP_USED,
+  PLAYER_WALK,
+  MAZE_FINISHED,
+  POWERUP_OBTAINED,
+  POWERUP_USED,
+  BLANK
 }

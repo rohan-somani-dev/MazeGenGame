@@ -35,7 +35,6 @@ public class StyledCheckBox extends JPanel {
 
 		label = new JLabel(text);
 		label.setFont(Setup.REGULAR);
-		label.setBackground(Setup.getColor(VisualType.DEBUG));
 		label.setForeground(Setup.getColor(VisualType.WALL));
 
 		checkBox = new JCheckBox();
