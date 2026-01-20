@@ -5,7 +5,6 @@ import entities.Player;
 import utilities.*;
 
 import java.util.ArrayList;
-import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Stack;
 
@@ -21,28 +20,24 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
   // TODO: serialize, allow to save mazes to file to be opened later.
   // https://www.baeldung.com/java-serialization
   // TODO: outsource pathfinding and maybe maze generation?
-  public int gridSize = Setup.GRID_SIZE;
-  public Node[][] nodes;
-  Random random;
-
+  public final int gridSize = Setup.GRID_SIZE;
+  public final Node[][] nodes;
+  final Random random;
+  private final ArrayList<UpdateListener> listeners = new ArrayList<>();
   public Node pathStart;
   public Node start;
   public Node end;
-
+  public Player player = null;
   private ArrayList<Node> path = null;
 
-  public Player player = null;
-
-  private final ArrayList<UpdateListener> listeners = new ArrayList<>();
-
-  public TimerController timerController = new TimerController();
+//  public TimerController timerController = new TimerController();
 
   /**
    * Initialize grid.
    *
    * @pre gridSize defined, Node accessible.
    * @post a 2d arr of {@link Node} objects "nodes" with the top left corner
-   *       marked as the start
+   * marked as the start
    */
   public Grid() {
 
@@ -58,11 +53,17 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
 
     start = nodes[0][0];
     start.setBaseState(CellState.START);
-    timerController.addListener(this);
-    timerController.startTimer(12);
+//    timerController.addListener(this);
+//    timerController.startTimer(12);
 
   }
 
+  /**
+   * Reset the maze, clearing path states, resetting start and end.
+   *
+   * @pre node[][] array exists.
+   * @post all nodes are reset to default, except for the start position.
+   */
   public void resetMaze() {
     for (Node n : getNodes()) {
       n.resetWalls();
@@ -71,16 +72,18 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
       n.setBaseState(CellState.BACKGROUND);
     }
     Node playerPos = player.position;
-    clearPathStates();
     start = playerPos;
     playerPos.setBaseState(CellState.START);
     path = null;
   }
 
+  /**
+   * self-explanatory
+   */
   public void startMazeGen() {
     Thread t = new Thread(this::genMaze);
     t.start(); // no memory leak issues, thread is destroyed after genMaze()
-               // is finished.
+    // is finished.
   }
 
   /**
@@ -88,12 +91,11 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
    * basically ripped pseudocode from <a href=
    * "https://en.wikipedia.org/wiki/Maze_generation_algorithm#Recursive_implementation">wikipedia</a>
    *
-   * @return the error type from {@link Setup setup}
    * @pre nodes[][] array populated
    * @post nodes[][] array formatted with each node having walls where the
-   *       maze said so
+   * maze said so
    */
-  public int genMaze() {
+  public void genMaze() {
     Stack<Node> stack = new Stack<>();
     Node curr = start;
     curr.mazeVisited = true;
@@ -133,7 +135,7 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
             Thread.sleep(Setup.mazeSleepTime);
           } catch (InterruptedException e) {
             Setup.handleError(e);
-            return Setup.INTERRUPTED_ERROR; // error code
+            return; // error code
           }
 
         }
@@ -146,7 +148,6 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
 
     }
     mazeGenFinished();
-    return Setup.FUNCTION_SUCCESS;
   }
 
   /**
@@ -156,7 +157,7 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
    *
    * @pre nodes[][] walls set; maze is generated.
    * @post nodes are reset to their base state; end choice is set, repaint
-   *       requested
+   * requested
    */
   void mazeGenFinished() {
     clearAllOverlays();
@@ -183,11 +184,10 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
   }
 
   /**
-   * @param _end
-   *             the node to be set as end
+   * @param _end the node to be set as end
    * @pre nodes[][] initialized. this can really be called anytime <br>
-   *      further down development, if wanted to set end as always top right,
-   *      deprecate {@link Grid#getDeadEnds()} and hardcode the call here.
+   * further down development, if wanted to set end as always top right,
+   * deprecate {@link Grid#getDeadEnds()} and hardcode the call here.
    * @post given node set as end, all nodes point to end as their goal.
    */
   void setEnd(Node _end) {
@@ -205,9 +205,10 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
    * Loop through the maze and get all the nodes with three walls
    *
    * @return a list of all the dead ends in the current maze.
+   *
    * @pre maze is finished, walls are set.
    * @post the return is not null, populated with all nodes in the grid with
-   *       three walls, which is always guaranteed due to the nature of dfs
+   * three walls, which is always guaranteed due to the nature of dfs
    */
   ArrayList<Node> getDeadEnds() {
     ArrayList<Node> out = new ArrayList<>();
@@ -224,11 +225,10 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
   /**
    * return the node at the indices given, else null
    *
-   * @param i
-   *          the x index of needed node
-   * @param j
-   *          the y index of needed node
+   * @param i the x index of needed node
+   * @param j the y index of needed node
    * @return the node at x, y if exists, else null.
+   *
    * @pre nodes[][] is populated
    * @post a Node at position nodes[j][i], or null if outside bounds.
    */
@@ -242,12 +242,12 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
    * get a random unvisited neighbour out of the four cardinal neighbours of
    * Node n, taking into account boundaries and such.
    *
-   * @param n
-   *          the node to find the neighbours of
+   * @param n the node to find the neighbours of
    * @return the (randomly) chosen neighbour. <br>
+   *
    * @pre populated nodes[][]
    * @post returns a random unvisited neighbour of n, or null if there is no
-   *       such neighbour.
+   * such neighbour.
    */
   Node getRandomNeighbour(Node n) {
     ArrayList<Node> neighbours = getNeighbours(n);
@@ -267,9 +267,9 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
   /**
    * Obtain a list of neighbours of node n.
    *
-   * @param n
-   *          the node to get the neighbours of
+   * @param n the node to get the neighbours of
    * @return a list containing neighbours of node n.
+   *
    * @pre populated nodes[][]
    * @post A nonnull list of neighbours, only empty if n is null.
    */
@@ -277,7 +277,7 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
     int x = n.indexX;
     int y = n.indexY;
     ArrayList<Node> neighbours = new ArrayList<>();
-    int[][] offsets = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
+    int[][] offsets = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
     for (int[] offset : offsets) {
       int currX = x + offset[0];
       int currY = y + offset[1];
@@ -290,9 +290,12 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
     return neighbours;
   }
 
+  /**
+   * self-explanatory. uses {@link Pathfinding}
+   */
   public void startPathGen() {
     pathStart = player.position;
-    clearPathStates();
+    clearAllOverlays();
     if (Setup.useAStar) {
       path = Pathfinding.findPathBest(this, pathStart, end);
     } else {
@@ -301,23 +304,12 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
     notifyListeners();
   }
 
-  public void clearPathStates() {
-    for (Node n : getNodes()) {
-      n.pathVisited = false;
-      n.onPath = false;
-      n.parent = null;
-    }
-
-    clearAllOverlays();
-  }
-
   /**
    * initialize the player.
    *
-   * @param player
-   *               player to be used for movement.
+   * @param player player to be used for movement.
    * @pre maze must be finished <br>
-   *      path from start to end is recommended unless you want to be mean.
+   * path from start to end is recommended unless you want to be mean.
    * @post player initialized, node at player position set to player.
    */
   void initPlayer(Player player) {
@@ -327,12 +319,9 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
   /**
    * move the player in a certain direction, checks validity.
    *
-   * @param player
-   *               the player to be moved, can be changed to entity later on in
-   *               development.
-   * @param dir
-   *               the direction to move the player in. doesn't have to be valid.
+   * @param dir the direction to move the player in. doesn't have to be valid.
    * @return true if move was successful, false if not.
+   *
    * @pre player exists, and is on grid.
    * @post player moves in desired direction if possible.
    */
@@ -376,6 +365,7 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
    * return the array of nodes flattened to be a 1d array.
    *
    * @return 1d array of all nodes in nodes.
+   *
    * @pre populated nodes[][]
    * @post a nonnull node array is returned.
    */
@@ -399,50 +389,60 @@ public class Grid implements Updater, UpdateListener { // 2 for 1 special
 
   }
 
+  /**
+   * get the path, could be null
+   *
+   * @return the path from path start (player) to the end (target), ordered from last to first.
+   */
   public ArrayList<Node> getPath() {
     return this.path;
   }
 
-    /**
-     * add a listener to the object.
-     *
-     * @param listener the listener to be added, implementing UpdateListener.
-     * @pre added listener must implement {@link UpdateListener}
-     * @post listener is added to list of listeners.
-     */
-    @Override
-    public void addListener(UpdateListener listener) {
-       listeners.add(listener);
-    }
+  /**
+   * add a listener to the object.
+   *
+   * @param listener the listener to be added, implementing UpdateListener.
+   * @pre added listener must implement {@link UpdateListener}
+   * @post listener is added to list of listeners.
+   */
+  @Override
+  public void addListener(UpdateListener listener) {
+    listeners.add(listener);
+  }
 
-    /**
-     * Notify every added listener that there has been an update.
-     *
-     * @pre None.
-     * @post every listener's {@code .onUpdate()} has been called.
-     */
-    @Override
-    public void notifyListeners() {
-        for (UpdateListener listener : listeners){
-            listener.onUpdate(Setup.ALL);
-        }
+  /**
+   * Notify every added listener that there has been an update.
+   *
+   * @pre None.
+   * @post every listener's {@code .onUpdate()} has been called.
+   */
+  @Override
+  public void notifyListeners() {
+    for (UpdateListener listener : listeners) {
+      listener.onUpdate(Setup.ALL);
     }
+  }
 
-    @Override
-    public void onUpdate(int code) {
-        if (code == Setup.TIMER_FINISHED) {
-            handleFailLogic();
-        } else {
-            handleTickLogic();
-        }
+  @Override
+  public void onUpdate(int code) {
+    if (code == Setup.TIMER_FINISHED) {
+      handleFailLogic();
+    } else {
+      handleTickLogic();
     }
+  }
 
-    public void handleFailLogic(){
-        System.out.println("YOU FAILED IDIOT");
-        notifyListeners();
-    }
+  /**
+   * unused for now
+   */
+  @SuppressWarnings("EmptyMethod")
+  public void handleFailLogic() {
+  }
 
-    public void handleTickLogic(){
-//        notifyListeners();
-    }
+  /**
+   * unused for now
+   */
+  @SuppressWarnings("EmptyMethod")
+  public void handleTickLogic() {
+  }
 }

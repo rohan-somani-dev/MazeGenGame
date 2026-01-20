@@ -1,7 +1,5 @@
 package core;
 
-import java.io.File;
-
 /**
  * start the program
  *
@@ -12,15 +10,15 @@ import java.io.File;
 
 public class Main {
 
-    /**
-     * the main class to run the game;
-     *
-     * @param unused not used;
-     * @pre program exists
-     * @post {@link GameController} is started
-     */
-    public static void main(String[] unused) {
-        GameController gc = new GameController();
-    }
+  /**
+   * the main class to run the game;
+   *
+   * @param unused not used;
+   * @pre program exists
+   * @post {@link GameController} is started
+   */
+  public static void main(String[] unused) {
+    new GameController();
+  }
 
 }

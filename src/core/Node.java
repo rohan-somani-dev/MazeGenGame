@@ -30,11 +30,6 @@ public class Node implements Comparable<Node> {
   boolean mazeVisited;
   Node target;
 
-  // path states
-  boolean pathVisited;
-  boolean onPath;
-  public Node parent;
-
   private CellState overlayState;
   private CellState baseState;
 
@@ -56,9 +51,10 @@ public class Node implements Comparable<Node> {
    * @param a the first node
    * @param b the second node
    * @return a boolean stating true if the nodes can be walked between.
+   *
    * @pre nonnull nodes, not necessarily neighbours.
    * @post determine if the nodes are walkable, false if there's a wall between
-   *       them.
+   * them.
    */
   static boolean canWalk(Node a, Node b) {
     int deltaX = a.indexX - b.indexX;
@@ -99,17 +95,11 @@ public class Node implements Comparable<Node> {
     this.overlayState = newState;
   }
 
-  public void setOverlayState(CellState newState, boolean overridePlayer) {
-    if (overridePlayer)
-      setOverlayState(newState);
-    else if (getState() != CellState.PLAYER)
-      setOverlayState(newState);
-  }
-
   /**
    * get the current state of the node.
    *
    * @return the current highest priority state of the node. COULD BE NULL.
+   *
    * @pre either baseState or overlayState should be nonnull
    * @post the overlay state is returned if it exists, else the baseState;
    */
@@ -125,10 +115,11 @@ public class Node implements Comparable<Node> {
    *
    * @param other the node to be compared against.
    * @return the number of orthogonal steps it takes to get from {@code this} to
-   *         {@code other}.
+   * {@code other}.
+   *
    * @pre nodes indices are defined, other nodes indices are defined.
    * @post the manhattan distance between the two nodes are returned, always
-   *       positive, possibly 0.
+   * positive, possibly 0.
    */
   public int getManhattanDistance(Node other) {
     return Math.abs(other.indexX - indexX) + Math.abs(other.indexY - indexY);
@@ -159,6 +150,11 @@ public class Node implements Comparable<Node> {
     this.setOverlayState(null);
   }
 
+  /**
+   * clear the overlay of the node.
+   *
+   * @param clearIfPlayer if the player state should be overridden.
+   */
   public void clearOverlay(boolean clearIfPlayer) {
     if (clearIfPlayer || getState() != CellState.PLAYER)
       clearOverlay();
@@ -175,6 +171,9 @@ public class Node implements Comparable<Node> {
     this.walls &= ~direction;
   }
 
+  /**
+   * set the walls of this node to default (surrounding)
+   */
   public void resetWalls() {
     this.walls = 0b1111;
   }

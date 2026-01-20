@@ -4,16 +4,17 @@ import config.Setup;
 import ui.themes.VisualType;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Scanner;
 
 /**
+ * A not so extensive image utility library containing various implementations
+ * of useful image things
+ *
  * @author RohanSomani
  * @name ImageUtils
  * @date 2026-01-02
@@ -24,10 +25,8 @@ public class ImageUtils {
    * recolor an icon using its alpha mask to prevent hard lines from
    * antialiasing.
    *
-   * @param image
-   *                 the image to be recolored
-   * @param newColor
-   *                 the new color for the icon to be set to
+   * @param image    the image to be recolored
+   * @param newColor the new color for the icon to be set to
    * @return the recolored icon.
    */
   public static BufferedImage recolorImage(BufferedImage image, Color newColor) {
@@ -49,6 +48,13 @@ public class ImageUtils {
     return recolored;
   }
 
+  /**
+   * tint a buffered image
+   *
+   * @param image     the image to be tinted
+   * @param tintColor the color for it to be tinted to.
+   * @return the tinted image
+   */
   @SuppressWarnings("ExtractMethodRecommender")
   public static BufferedImage tint(BufferedImage image, Color tintColor) {
     // BufferedImage tinted = new BufferedImage();
@@ -56,10 +62,12 @@ public class ImageUtils {
     int height = image.getHeight(null);
 
     BufferedImage tinted = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    int[] pixels = new int[width * height];
+    image.getRGB(0, 0, width, height, pixels, 0, width);
 
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < height; y++) {
-        int current = image.getRGB(x, y);
+        int current = pixels[y * width + x];
 
         /*
          * ints in java are 32 bits (4 bytes). colors returned from get
@@ -110,10 +118,8 @@ public class ImageUtils {
   /**
    * a helper method to help create themes from the console.
    *
-   * @param input
-   *                 scanner to be used.
-   * @param fileName
-   *                 the filename inside resources/themes/ to be used. omitting
+   * @param input    scanner to be used.
+   * @param fileName the filename inside resources/themes/ to be used. omitting
    *                 png
    */
   @SuppressWarnings("unused")
@@ -129,17 +135,16 @@ public class ImageUtils {
       colors[i] = Integer.parseInt(color, 16);
     }
 
-    System.out.println(Arrays.toString(colors));
-
     int width = numItems * Setup.BAR_SIZE;
 
     outputPhoto(pathToWriteTo, colors, width);
   }
 
+  @SuppressWarnings("DeprecatedIsStillUsed")
+  @Deprecated
   private static void outputPhoto(String filePath, int[] colors, int width) {
 
     File outputFile = new File(filePath);
-    System.out.println(outputFile);
 
     int height = Setup.BAR_SIZE * 4;
 
@@ -157,11 +162,9 @@ public class ImageUtils {
 
     try {
       ImageIO.write(image, "png", outputFile);
-      System.out.println("I CAME, I SAW, I WROTE");
     } catch (IOException e) {
       Setup.handleError(e);
     }
-    System.out.println(filePath);
     ProcessBuilder builder = new ProcessBuilder("explorer.exe", outputFile.getAbsolutePath());
 
     try {
@@ -172,6 +175,15 @@ public class ImageUtils {
 
   }
 
+  /**
+   * resize a buffered image, using iterative resizing for smoother and sometimes
+   * faster resizing.
+   *
+   * @param image        the image to be resized.
+   * @param targetWidth  self-explanatory.
+   * @param targetHeight as above.
+   * @return the resized image.
+   */
   public static BufferedImage resizeImage(BufferedImage image, int targetWidth, int targetHeight) {
     int width = image.getWidth();
     int height = image.getHeight();
@@ -197,16 +209,16 @@ public class ImageUtils {
     return out;
   }
 
-  public static ImageIcon setupIcon(String filePath, int targetSize, Color targetColor) {
-    File selectedFile;
-    BufferedImage original;
-    try {
-      selectedFile = new File(filePath);
-      original = ImageIO.read(selectedFile);
-    } catch (IOException e) {
-      Setup.handleError(e);
-      return null;
-    }
+  /**
+   * set up an icon to be used for displaying.
+   *
+   * @param name        the name of the icon from settings.
+   * @param targetSize  the target size (width and height) of the new icon.
+   * @param targetColor the desired color of the new icon.
+   * @return the set-up icon.
+   */
+  public static ImageIcon setupIcon(String name, int targetSize, Color targetColor) {
+    BufferedImage original = Setup.ICONS.get(name);
     BufferedImage resized = resizeImage(original, targetSize, targetSize);
     BufferedImage recolored = recolorImage(resized, targetColor);
     return new ImageIcon(recolored);
@@ -220,6 +232,15 @@ public class ImageUtils {
 
   }
 
+  /**
+   * ignore this please :)
+   *
+   * @param start .
+   * @param end   .
+   * @param t     .
+   * @return .
+   */
+  @SuppressWarnings("unused")
   public static Color cubicEaseColor(Color start, Color end, float t) {
     t = Math.min(Math.max(0f, t), 1f);
     t = cubicEase(t);

@@ -1,44 +1,61 @@
-/*
-* Date: Jan 14, 2026
-* Name: FontLoader
-* Description: 
-* Author: RohanSomani
-*/
-
 package utilities;
-
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.GraphicsEnvironment;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import config.Setup;
 
+import java.awt.*;
+import java.io.IOException;
+import java.net.URL;
+
+/**
+ * A simple utility class to load fonts from the resources folder
+ *
+ * @author RohanSomani
+ * @date Jan 14, 2026
+ * @name FontLoader
+ */
 public class FontLoader {
-	public static void loadFonts(){
-		File fontsDir = new File(Setup.FONTS_PATH);
-		if (!fontsDir.isDirectory() || fontsDir == null) Setup.handleError(new FileNotFoundException("fonts is not a directory"));
-		
-		for (File f : fontsDir.listFiles()){
-			if (f.getName().endsWith(".ttf")) {
-				loadFont(f); 		
-			}
-		}
-	}
-	
-	public static void loadFont(File f) {
-		try {
-			Font font = Font.createFont(Font.TRUETYPE_FONT, f);
-			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-			ge.registerFont(font);
-		} catch (IOException | FontFormatException e){
-			Setup.handleError(e);
-			return;
-		}
-		
-	}
-	
+
+  private FontLoader() {
+    throw new UnsupportedOperationException("DON'T INSTANTIATE FONTLOADER");
+  }
+
+  /**
+   * load the fonts from resources into the graphics environment.
+   *
+   * @post graphics environment has access to resource fonts as the font family
+   * name.
+   */
+  public static void loadFonts() {
+    URL italic = FontLoader.class.getResource("/fonts/NunitoSans-Italic.ttf");
+    URL reg = FontLoader.class.getResource("/fonts/NunitoSans-Regular.ttf");
+    URL mono = FontLoader.class.getResource("/fonts/Lilex.ttf");
+
+    if (italic != null) {
+      loadFont(italic);
+    }
+    if (reg != null) {
+      loadFont(reg);
+    }
+    if (mono != null) {
+      loadFont(mono);
+    }
+  }
+
+  /**
+   * load a specific font from file.
+   *
+   * @param path the font URL to be loaded from.
+   * @post the graphics environment has access to the font.
+   */
+  public static void loadFont(URL path) {
+    try {
+      Font font = Font.createFont(Font.TRUETYPE_FONT, path.openStream());
+      GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+      ge.registerFont(font);
+    } catch (IOException | FontFormatException e) {
+      Setup.handleError(e);
+    }
+
+  }
 
 }

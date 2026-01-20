@@ -1,45 +1,33 @@
 package ui.styled;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Rectangle;
-import java.util.HashMap;
-
-import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-
 import config.Setup;
 import ui.themes.Theme;
 import ui.themes.VisualType;
 import utilities.ComboBoxItem;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.HashMap;
+
 /**
+ * a very hard theme drop down that shows pictures of all the available themes and updates the themes dynamically
+ *
  * @author RohanSomani
  * @name ThemeDropDown
  * @date 2026-01-03
  */
 public class ThemeDropDown extends JComboBox<ComboBoxItem> {
   // we don't need to parameterize the type of the class, because we know it will
-  // always hold ComboBoxItems, so we can hardcode it as that.
+  // always hold ComboBoxItems, so we can hard-code it as that.
   // writing it to show the images was a nightmare. it is 2am and i am dying.
   // https://shred.zone/cilla/page/336/setting-a-renderer-on-jcombobox.html
   // https://www.codejava.net/java-se/swing/create-custom-gui-for-jcombobox
 
-  HashMap<String, Theme> themeMap;
-
-  Runnable reqUpdate;
+  final HashMap<String, Theme> themeMap;
 
   /**
    *
+   * @param reqUpdate the function to be run when the theme changes.
    */
   public ThemeDropDown(Runnable reqUpdate) {
     super();
@@ -53,11 +41,12 @@ public class ThemeDropDown extends JComboBox<ComboBoxItem> {
     setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
     themeMap = Setup.getThemes();
-    this.reqUpdate = reqUpdate;
 
     addActionListener((e) -> {
       ComboBoxItem curr = (ComboBoxItem) getSelectedItem();
-      Setup.setTheme(curr.name);
+      if (curr != null) {
+        Setup.setTheme(curr.name);
+      }
       reqUpdate.run();
     });
 
@@ -91,7 +80,7 @@ public class ThemeDropDown extends JComboBox<ComboBoxItem> {
   private void initChoices() {
     DefaultComboBoxModel<ComboBoxItem> model = new DefaultComboBoxModel<>();
     for (String theme : themeMap.keySet()) {
-      ComboBoxItem item = new ComboBoxItem(theme, "resources/themes/" + theme + ".png");
+      ComboBoxItem item = new ComboBoxItem(theme, "/themes/" + theme + ".png"); //FIXME
       model.addElement(item);
     }
     setModel(model);
@@ -115,7 +104,7 @@ public class ThemeDropDown extends JComboBox<ComboBoxItem> {
     setRenderer(new DefaultListCellRenderer() {
       @Override
       public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
-          boolean cellHasFocus) {
+                                                    boolean cellHasFocus) {
         ComboBoxItem item = (ComboBoxItem) value;
         JPanel container = new JPanel();
         container.setLayout(new BorderLayout());

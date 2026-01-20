@@ -2,19 +2,17 @@ package ui;
 
 import config.Setup;
 import ui.styled.StyledIconButton;
-import ui.styled.StyledTextButton;
 import ui.themes.VisualType;
-import utilities.ImageUtils;
 import utilities.Renderable;
 
-import javax.imageio.IIOException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
 
 /**
+ * A padding menu containing settings, info, and close button
+ *
  * @author RohanSomani
  * @name resizedUI
  * @date 2026-01-02
@@ -25,13 +23,12 @@ public class Menu extends JPanel implements Renderable {
   final UIController controller;
 
   private boolean settingsOpen = false;
-  private boolean helpOpen = false; 
+  private boolean helpOpen = false;
 
   /**
    * initialize the right menu, currently settings and info button held on it.
    *
-   * @param controller
-   *                   the UIController that will be asked to update.
+   * @param controller the UIController that will be asked to update.
    */
   public Menu(UIController controller) {
     this.controller = controller;
@@ -47,19 +44,19 @@ public class Menu extends JPanel implements Renderable {
 
     buttonHolder.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-    StyledIconButton exitButton = new StyledIconButton("resources/icons/exit.png", VisualType.WALL);
+    StyledIconButton exitButton = new StyledIconButton(new ImageIcon(Setup.ICONS.get("exit")), VisualType.WALL);
     exitButton.addActionListener(e -> controller.exit());
 
     buttonHolder.add(exitButton);
     buttonHolder.add(Box.createVerticalStrut(8));
 
-    StyledIconButton settingsButton = new StyledIconButton("resources/icons/gears.png", VisualType.WALL);
+    StyledIconButton settingsButton = new StyledIconButton(new ImageIcon(Setup.ICONS.get("gears")), VisualType.WALL);
     settingsButton.addActionListener(e -> launchSettings());
 
     buttonHolder.add(settingsButton, BorderLayout.NORTH);
     buttonHolder.add(Box.createVerticalStrut(8));
 
-    StyledIconButton helpButton = new StyledIconButton("resources/icons/info.png", VisualType.WALL);
+    StyledIconButton helpButton = new StyledIconButton(new ImageIcon(Setup.ICONS.get("info")), VisualType.WALL);
     helpButton.addActionListener(e -> launchHelp());
 
     buttonHolder.add(helpButton, BorderLayout.SOUTH);
@@ -72,23 +69,22 @@ public class Menu extends JPanel implements Renderable {
       return; // stops the user from opening settings multiple times.
     settingsOpen = true;
     new Settings(SwingUtilities.getWindowAncestor(this), // gets the parent
-                                                         // JFrame, the
-                                                         // game.
-        this::onSettingsUpdate, this::onSettingsClosed);
+            // JFrame, the
+            // game.
+            this::onSettingsUpdate, this::onSettingsClosed);
   }
 
   private void launchHelp() {
-    if (helpOpen) return; 
+    if (helpOpen) return;
     helpOpen = true;
-    HelpDialog helpDialog = new HelpDialog(SwingUtilities.getWindowAncestor(this), "How to play!") ;
+    HelpDialog helpDialog = new HelpDialog(SwingUtilities.getWindowAncestor(this), "How to play!");
     helpDialog.addWindowListener(new WindowAdapter() {
       @Override
-      public void windowClosed(WindowEvent e){
-        helpOpen = false; 
+      public void windowClosed(WindowEvent e) {
+        helpOpen = false;
       }
-    }); 
+    });
   }
-
 
   private void onSettingsUpdate() {
     controller.update();
@@ -104,7 +100,7 @@ public class Menu extends JPanel implements Renderable {
    *
    * @pre ready to be drawn.
    * @post update has taken place, everything that needed to be drawn is
-   *       drawn.
+   * drawn.
    */
   @Override
   public void onUpdate() {

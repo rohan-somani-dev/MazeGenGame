@@ -4,7 +4,6 @@ import config.Setup;
 import core.Node;
 import ui.themes.VisualType;
 import utilities.CellState;
-import utilities.ImageUtils;
 
 import java.awt.*;
 
@@ -53,6 +52,5 @@ public class NodeDrawer {
     if (n.checkWall(Setup.RIGHT) || isLastRow)
       g.drawLine(x + size - 1, y, x + size - 1, y + size - 1);
   }
-
 
 }

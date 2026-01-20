@@ -1,28 +1,25 @@
 package ui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.FlowLayout;
-import java.awt.Window;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
-
 import config.Setup;
 import ui.styled.StyledTextButton;
 import ui.themes.VisualType;
 
-//TODO set it to box layout to have padding around the edges. 
+import javax.swing.*;
+import java.awt.*;
+
+//TODO set it to box layout to have padding around the edges.
+
+/**
+ * A help dialog class to be used when the (?) icon is clicked.
+ */
 public class HelpDialog extends JDialog {
 
+  /**
+   * pop up a help dialog, with an okay button. using {@link Setup#HELP_MESSAGE}
+   *
+   * @param owner the parent window.
+   * @param title the title of the help window.
+   */
   public HelpDialog(Window owner, String title) {
     super(owner, title);
     setModal(true);
@@ -33,8 +30,8 @@ public class HelpDialog extends JDialog {
     content.setBackground(Setup.getColor(VisualType.BACKGROUND));
 
     content.setBorder(BorderFactory.createCompoundBorder(
-        BorderFactory.createLineBorder(Setup.getColor(VisualType.BACKGROUND).brighter(), 3),
-        BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+            BorderFactory.createLineBorder(Setup.getColor(VisualType.BACKGROUND).brighter(), 3),
+            BorderFactory.createEmptyBorder(20, 20, 20, 20)));
 
     setContentPane(content);
 
@@ -53,9 +50,7 @@ public class HelpDialog extends JDialog {
 
     JButton okButton = new StyledTextButton("THANKS!");
     okButton.setOpaque(true);
-    okButton.addActionListener(e -> {
-      dispose();
-    });
+    okButton.addActionListener(e -> dispose());
     buttonHolder.add(okButton);
 
     buttonHolder.setAlignmentX(Component.LEFT_ALIGNMENT);

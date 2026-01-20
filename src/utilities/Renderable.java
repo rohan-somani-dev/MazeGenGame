@@ -8,18 +8,18 @@ import javax.swing.*;
  */
 public interface Renderable {
 
-    /**
-     * function to be called to repaint, can implement other code but mostly used to call {@code this.repaint()}.
-     *
-     * @pre ready to be drawn.
-     * @post update has taken place, everything that needed to be drawn is drawn.
-     */
-    void onUpdate();
+  /**
+   * function to be called to repaint, can implement other code but mostly used to call {@code this.repaint()}.
+   *
+   * @pre ready to be drawn.
+   * @post update has taken place, everything that needed to be drawn is drawn.
+   */
+  void onUpdate();
 
-    /**
-     * get the underlying component of self.
-     *
-     * @return the component part of the implementing object.
-     */
-    JComponent getComponent();
+  /**
+   * get the underlying component of self.
+   *
+   * @return the component part of the implementing object.
+   */
+  JComponent getComponent();
 }

@@ -7,24 +7,30 @@ import utilities.Updater;
 import javax.swing.*;
 import java.util.ArrayList;
 
+/*
+************************************************************************************************************************
+                                     PLEASE IGNORE THIS FILE FOR NOW :)
+************************************************************************************************************************
+ */
+
 /**
+ * A simple timer controller
+ *
  * @author RohanSomani
  * @name TimerController
  * @date 2026-01-18
  */
+@SuppressWarnings("MissingJavadoc")
 public class TimerController implements Updater {
 
   private final static int TIMER_INTERVAL = 16; // millis
   private final ArrayList<UpdateListener> listeners = new ArrayList<>();
+  public float sineValue = 0f;
   private long timeLeft = 1000; // in millis
   private Timer timer;
-
   private long prevTime;
   private long deltaTime;
-
   private boolean finished = true;
-
-  public float sineValue = 0f; 
 
   public void startTimer(int timeToFire) {
     stopTimer();
@@ -68,6 +74,7 @@ public class TimerController implements Updater {
     notifyListeners();
   }
 
+  @SuppressWarnings("unused")
   public void restartTimer(int newTime) {
     startTimer(newTime);
   }
